@@ -1,0 +1,507 @@
+{
+  "timestamp": "2025-10-22T17:13:33.636Z",
+  "summary": {
+    "total": 62,
+    "high": 5,
+    "medium": 57,
+    "low": 0
+  },
+  "issues": [
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 23,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 97,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 195,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 231,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 278,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 320,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 355,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 401,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 476,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 515,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 581,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/BlockchainController.ts",
+      "line": 24,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/BlockchainController.ts",
+      "line": 77,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/BlockchainController.ts",
+      "line": 127,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/CardController.ts",
+      "line": 66,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/middleware/inputSanitization.ts",
+      "line": 119,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/middleware/security.ts",
+      "line": 16,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/middleware/security.ts",
+      "line": 72,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/routes/adminRoutes.ts",
+      "line": 15,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/routes/adminRoutes.ts",
+      "line": 58,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/routes/adminRoutes.ts",
+      "line": 201,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/routes/auth.ts",
+      "line": 31,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/server-simple.ts",
+      "line": 76,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/server-simple.ts",
+      "line": 93,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/server-simple.ts",
+      "line": 108,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/server-simple.ts",
+      "line": 116,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/server-simple.ts",
+      "line": 225,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/server-simple.ts",
+      "line": 278,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/server-simple.ts",
+      "line": 298,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "XSS",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/server-simple.ts",
+      "line": 352,
+      "description": "User input not sanitized",
+      "recommendation": "Sanitize and validate all user inputs"
+    },
+    {
+      "type": "Hardcoded Secret",
+      "severity": "HIGH",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 257,
+      "description": "Potential hardcoded password or secret",
+      "recommendation": "Use environment variables for sensitive data"
+    },
+    {
+      "type": "Hardcoded Secret",
+      "severity": "HIGH",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 283,
+      "description": "Potential hardcoded password or secret",
+      "recommendation": "Use environment variables for sensitive data"
+    },
+    {
+      "type": "Hardcoded Secret",
+      "severity": "HIGH",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 299,
+      "description": "Potential hardcoded password or secret",
+      "recommendation": "Use environment variables for sensitive data"
+    },
+    {
+      "type": "Hardcoded Secret",
+      "severity": "HIGH",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 407,
+      "description": "Potential hardcoded password or secret",
+      "recommendation": "Use environment variables for sensitive data"
+    },
+    {
+      "type": "Hardcoded Secret",
+      "severity": "HIGH",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 429,
+      "description": "Potential hardcoded password or secret",
+      "recommendation": "Use environment variables for sensitive data"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 175,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 402,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 450,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 460,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 477,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 516,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 542,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 582,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/AuthController.ts",
+      "line": 687,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/BlockchainController.ts",
+      "line": 25,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/BlockchainController.ts",
+      "line": 78,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/BlockchainController.ts",
+      "line": 128,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/BlockchainController.ts",
+      "line": 179,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/BlockchainController.ts",
+      "line": 212,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/BlockchainController.ts",
+      "line": 252,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/CardController.ts",
+      "line": 17,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/CardController.ts",
+      "line": 65,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/CardController.ts",
+      "line": 204,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/CardController.ts",
+      "line": 249,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/WalletController.ts",
+      "line": 15,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/controllers/WalletController.ts",
+      "line": 35,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/middleware/authMiddleware.ts",
+      "line": 50,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/middleware/authMiddleware.ts",
+      "line": 72,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/middleware/authMiddleware.ts",
+      "line": 80,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/middleware/authMiddleware.ts",
+      "line": 117,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "Missing Authorization",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/server-simple.ts",
+      "line": 25,
+      "description": "User access not properly authorized",
+      "recommendation": "Add proper authorization checks"
+    },
+    {
+      "type": "CORS Misconfiguration",
+      "severity": "MEDIUM",
+      "file": "/Users/apple/new_MalPay/backend/src/server.ts",
+      "line": 60,
+      "description": "CORS not properly configured",
+      "recommendation": "Configure CORS with specific origins"
+    }
+  ]
+}

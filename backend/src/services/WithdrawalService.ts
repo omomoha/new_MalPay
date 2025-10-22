@@ -219,26 +219,27 @@ export class WithdrawalService {
         );
 
         // 7. Create transaction record
-        await client.query(`
-          INSERT INTO transactions (
+        await client.query(
+          `INSERT INTO transactions (
             sender_id, receiver_id, amount_usdt, amount_fiat, currency,
             tx_type, status, source_type, source_id, exchange_rate, fee,
             description, completed_at
-          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, CURRENT_TIMESTAMP)
-        `, [
-          withdrawal.userId,
-          null, // No receiver for withdrawals
-          totalAmountUSDT,
-          withdrawal.amountFiat + withdrawal.fee + withdrawal.processingFee,
-          withdrawal.currency,
-          'withdrawal',
-          'completed',
-          'bank_account',
-          withdrawal.bankAccountId,
-          withdrawal.exchangeRate,
-          withdrawal.fee + withdrawal.processingFee,
-          `Withdrawal to ${bankAccount.bankName} - ${bankAccount.accountNumber}`
-        ]);
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, CURRENT_TIMESTAMP)`,
+          [
+            withdrawal.userId,
+            null, // No receiver for withdrawals
+            totalAmountUSDT,
+            withdrawal.amountFiat + withdrawal.fee + withdrawal.processingFee,
+            withdrawal.currency,
+            'withdrawal',
+            'completed',
+            'bank_account',
+            withdrawal.bankAccountId,
+            withdrawal.exchangeRate,
+            withdrawal.fee + withdrawal.processingFee,
+            `Withdrawal to ${bankAccount.bankName} - ${bankAccount.accountNumber}`
+          ]
+        );
 
         // 8. Send success notification
         await this.notificationService.sendNotification(

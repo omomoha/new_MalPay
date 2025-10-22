@@ -108,7 +108,7 @@ const ProfileCompletionScreen: React.FC<ProfileCompletionScreenProps> = ({ navig
           Complete Your Profile
         </Text>
         <Text variant="bodyLarge" style={styles.subtitle}>
-          Set up your account to start sending money
+          Set up your account to start sending money instantly
         </Text>
         
         <View style={styles.progressContainer}>
@@ -134,7 +134,7 @@ const ProfileCompletionScreen: React.FC<ProfileCompletionScreenProps> = ({ navig
 
         {renderStepCard(
           'Add Payment Card',
-          'Add a debit/credit card for transactions',
+          'Add a debit/credit card for instant payments',
           profileStatus.hasCards,
           handleAddCard,
           'wallet-outline'

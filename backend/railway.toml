@@ -1,0 +1,23 @@
+# Railway deployment configuration for MalPay Backend
+
+# Railway.toml
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "npm start"
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
+[env]
+NODE_ENV = "production"
+PORT = "$PORT"
+
+# Environment variables that need to be set in Railway dashboard:
+# JWT_SECRET - JWT secret key (generate a secure random string)
+# JWT_REFRESH_SECRET - JWT refresh secret key (generate a secure random string)
+# CORS_ORIGIN - Allowed CORS origins (comma-separated)
+# DATABASE_URL - PostgreSQL connection string (Railway will provide this)
+# REDIS_URL - Redis connection string (Railway will provide this)

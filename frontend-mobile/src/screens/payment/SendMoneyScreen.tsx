@@ -528,7 +528,7 @@ const styles = StyleSheet.create({
   balanceAmount: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.textPrimary,
   },
   section: {
     marginTop: 30,
@@ -536,7 +536,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.textPrimary,
     marginBottom: 15,
   },
   inputGroup: {
@@ -545,7 +545,7 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 14,
     fontWeight: '500',
-    color: colors.text,
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   inputContainer: {
@@ -565,18 +565,18 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
-    color: colors.text,
+    color: colors.textPrimary,
     marginLeft: 12,
   },
   amountInput: {
     flex: 1,
     fontSize: 18,
-    color: colors.text,
+    color: colors.textPrimary,
     fontWeight: '500',
   },
   currencySymbol: {
     fontSize: 18,
-    color: colors.text,
+    color: colors.textPrimary,
     fontWeight: 'bold',
     marginRight: 8,
   },
@@ -693,7 +693,7 @@ const styles = StyleSheet.create({
   recipientName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.textPrimary,
     marginBottom: 2,
   },
   recipientEmail: {
@@ -748,7 +748,7 @@ const styles = StyleSheet.create({
   },
   quickAmountText: {
     fontSize: 14,
-    color: colors.text,
+    color: colors.textPrimary,
     fontWeight: '500',
   },
   summaryCard: {
@@ -762,7 +762,7 @@ const styles = StyleSheet.create({
   summaryTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.textPrimary,
     marginBottom: 12,
   },
   summaryRow: {
@@ -777,7 +777,7 @@ const styles = StyleSheet.create({
   },
   summaryValue: {
     fontSize: 14,
-    color: colors.text,
+    color: colors.textPrimary,
     fontWeight: '500',
   },
   summaryDivider: {
@@ -787,12 +787,12 @@ const styles = StyleSheet.create({
   },
   summaryTotalLabel: {
     fontSize: 16,
-    color: colors.text,
+    color: colors.textPrimary,
     fontWeight: 'bold',
   },
   summaryTotalValue: {
     fontSize: 16,
-    color: colors.text,
+    color: colors.textPrimary,
     fontWeight: 'bold',
   },
   buttonContainer: {

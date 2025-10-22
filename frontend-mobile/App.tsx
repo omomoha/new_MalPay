@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
-import { store } from './src/store/store';
+import { store } from './src/store';
 import { colors } from './src/theme/colors';
 import BottomNavigation from './src/components/BottomNavigation';
 import HomeScreen from './src/screens/main/HomeScreen';

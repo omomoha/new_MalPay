@@ -33,17 +33,14 @@ const RegisterScreen: React.FC = () => {
   const { isLoading, error } = useSelector((state: RootState) => state.auth);
 
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    name: '',
     email: '',
-    username: '',
-    phone: '',
+    phoneNumber: '',
     password: '',
     confirmPassword: '',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [acceptTerms, setAcceptTerms] = useState(false);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
@@ -54,20 +51,15 @@ const RegisterScreen: React.FC = () => {
   };
 
   const validateForm = () => {
-    const { firstName, lastName, email, username, phone, password, confirmPassword } = formData;
+    const { name, email, phoneNumber, password, confirmPassword } = formData;
 
-    if (!firstName || !lastName || !email || !username || !password || !confirmPassword) {
+    if (!name || !email || !phoneNumber || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill in all required fields');
       return false;
     }
 
     if (!APP_CONFIG.validation.email.pattern.test(email)) {
       Alert.alert('Error', APP_CONFIG.validation.email.message);
-      return false;
-    }
-
-    if (!APP_CONFIG.validation.username.pattern.test(username)) {
-      Alert.alert('Error', APP_CONFIG.validation.username.message);
       return false;
     }
 
@@ -81,13 +73,8 @@ const RegisterScreen: React.FC = () => {
       return false;
     }
 
-    if (phone && !APP_CONFIG.validation.phone.pattern.test(phone)) {
+    if (!APP_CONFIG.validation.phone.pattern.test(phoneNumber)) {
       Alert.alert('Error', APP_CONFIG.validation.phone.message);
-      return false;
-    }
-
-    if (!acceptTerms) {
-      Alert.alert('Error', 'Please accept the Terms and Conditions');
       return false;
     }
 
@@ -144,28 +131,16 @@ const RegisterScreen: React.FC = () => {
 
         <Card style={styles.card}>
           <Card.Content style={styles.cardContent}>
-            <View style={styles.nameRow}>
-              <TextInput
-                label="First Name"
-                value={formData.firstName}
-                onChangeText={(value) => handleInputChange('firstName', value)}
-                mode="outlined"
-                autoCapitalize="words"
-                autoComplete="given-name"
-                style={[styles.input, styles.halfInput]}
-                error={!!error && error.includes('firstName')}
-              />
-              <TextInput
-                label="Last Name"
-                value={formData.lastName}
-                onChangeText={(value) => handleInputChange('lastName', value)}
-                mode="outlined"
-                autoCapitalize="words"
-                autoComplete="family-name"
-                style={[styles.input, styles.halfInput]}
-                error={!!error && error.includes('lastName')}
-              />
-            </View>
+            <TextInput
+              label="Name"
+              value={formData.name}
+              onChangeText={(value) => handleInputChange('name', value)}
+              mode="outlined"
+              autoCapitalize="words"
+              autoComplete="name"
+              style={styles.input}
+              error={!!error && error.includes('name')}
+            />
 
             <TextInput
               label="Email"
@@ -180,25 +155,14 @@ const RegisterScreen: React.FC = () => {
             />
 
             <TextInput
-              label="Username"
-              value={formData.username}
-              onChangeText={(value) => handleInputChange('username', value)}
-              mode="outlined"
-              autoCapitalize="none"
-              autoComplete="username"
-              style={styles.input}
-              error={!!error && error.includes('username')}
-            />
-
-            <TextInput
-              label="Phone Number (Optional)"
-              value={formData.phone}
-              onChangeText={(value) => handleInputChange('phone', value)}
+              label="Phone Number"
+              value={formData.phoneNumber}
+              onChangeText={(value) => handleInputChange('phoneNumber', value)}
               mode="outlined"
               keyboardType="phone-pad"
               autoComplete="tel"
               style={styles.input}
-              error={!!error && error.includes('phone')}
+              error={!!error && error.includes('phoneNumber')}
             />
 
             <TextInput
@@ -235,18 +199,6 @@ const RegisterScreen: React.FC = () => {
               error={!!error && error.includes('confirmPassword')}
             />
 
-            <View style={styles.termsContainer}>
-              <Checkbox
-                status={acceptTerms ? 'checked' : 'unchecked'}
-                onPress={() => setAcceptTerms(!acceptTerms)}
-              />
-              <Text variant="bodySmall" style={styles.termsText}>
-                I agree to the{' '}
-                <Text style={styles.linkText}>Terms and Conditions</Text>
-                {' '}and{' '}
-                <Text style={styles.linkText}>Privacy Policy</Text>
-              </Text>
-            </View>
 
             <Button
               mode="contained"
@@ -314,29 +266,8 @@ const styles = StyleSheet.create({
   cardContent: {
     padding: customTheme.spacing.lg,
   },
-  nameRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  halfInput: {
-    flex: 0.48,
-  },
   input: {
     marginBottom: customTheme.spacing.md,
-  },
-  termsContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: customTheme.spacing.lg,
-  },
-  termsText: {
-    flex: 1,
-    marginLeft: customTheme.spacing.sm,
-    lineHeight: 20,
-  },
-  linkText: {
-    color: customTheme.colors.primary,
-    textDecorationLine: 'underline',
   },
   registerButton: {
     marginBottom: customTheme.spacing.lg,

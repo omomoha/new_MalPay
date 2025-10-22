@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
   summaryTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.textPrimary,
     marginBottom: 12,
   },
   summaryRow: {
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
   },
   summaryValue: {
     fontSize: 14,
-    color: colors.text,
+    color: colors.textPrimary,
     fontWeight: '500',
   },
   instructionsContainer: {
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.textPrimary,
     marginBottom: 12,
     textAlign: 'center',
   },
@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.textPrimary,
     backgroundColor: colors.surface,
   },
   pinInputFilled: {

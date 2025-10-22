@@ -126,12 +126,12 @@ const TransactionsScreen = () => {
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <TouchableOpacity style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={colors.text} />
+            <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Transactions</Text>
           <View style={styles.headerIcons}>
-            <Ionicons name="wifi-outline" size={16} color={colors.text} />
-            <Ionicons name="battery-half-outline" size={16} color={colors.text} style={styles.statusIcon} />
+            <Ionicons name="wifi-outline" size={16} color={colors.textPrimary} />
+            <Ionicons name="battery-half-outline" size={16} color={colors.textPrimary} style={styles.statusIcon} />
           </View>
         </View>
         
@@ -148,7 +148,7 @@ const TransactionsScreen = () => {
             />
           </View>
           <TouchableOpacity style={styles.filterButton}>
-            <Ionicons name="options-outline" size={20} color={colors.text} />
+            <Ionicons name="options-outline" size={20} color={colors.textPrimary} />
           </TouchableOpacity>
         </View>
       </View>
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.textPrimary,
   },
   headerIcons: {
     flexDirection: 'row',
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 8,
     fontSize: 16,
-    color: colors.text,
+    color: colors.textPrimary,
   },
   filterButton: {
     padding: 8,
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
   transactionType: {
     fontSize: 14,
     fontWeight: '500',
-    color: colors.text,
+    color: colors.textPrimary,
     marginBottom: 2,
   },
   transactionTime: {

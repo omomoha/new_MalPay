@@ -179,7 +179,7 @@ const CardsScreen: React.FC<CardsScreenProps> = ({ navigation }) => {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Recent Transactions</Text>
             <TouchableOpacity>
-              <Text style={styles.seeAllText}>See all ></Text>
+              <Text style={styles.seeAllText}>See all {'>'}</Text>
             </TouchableOpacity>
           </View>
           
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.textPrimary,
   },
   addCardButton: {
     flexDirection: 'row',
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
   transactionMerchant: {
     fontSize: 14,
     fontWeight: '500',
-    color: colors.text,
+    color: colors.textPrimary,
     marginBottom: 2,
   },
   transactionDate: {

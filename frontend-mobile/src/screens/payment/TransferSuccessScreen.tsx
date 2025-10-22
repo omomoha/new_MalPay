@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.textPrimary,
     marginBottom: 15,
   },
   transferDetails: {
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
   },
   detailValue: {
     fontSize: 14,
-    color: colors.text,
+    color: colors.textPrimary,
     fontWeight: '500',
   },
   nextSteps: {
@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
   },
   stepText: {
     fontSize: 14,
-    color: colors.text,
+    color: colors.textPrimary,
     flex: 1,
   },
   balanceUpdate: {
@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
   balanceAmount: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.textPrimary,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
   secondaryButtonText: {
     fontSize: 16,
     fontWeight: '500',
-    color: colors.text,
+    color: colors.textPrimary,
   },
   primaryButton: {
     flex: 2,

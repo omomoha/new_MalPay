@@ -1,7 +1,7 @@
 // API Configuration
 export const API_BASE_URL = __DEV__ 
   ? 'http://localhost:3000/api/v1'
-  : 'https://api.malpay.com/v1';
+  : 'https://malpay-backend-production.up.railway.app/api/v1';
 
 export const API_TIMEOUT = 30000; // 30 seconds
 

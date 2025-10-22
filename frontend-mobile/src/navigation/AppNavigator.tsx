@@ -2,8 +2,10 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSelector } from 'react-redux';
-import { RootState } from '@store';
+import { RootState } from '../store';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RouteProp } from '@react-navigation/native';
 
 // Auth Screens
 import LoginScreen from '@screens/auth/LoginScreen';
@@ -11,6 +13,7 @@ import RegisterScreen from '@screens/auth/RegisterScreen';
 import ForgotPasswordScreen from '@screens/auth/ForgotPasswordScreen';
 import VerifyEmailScreen from '@screens/auth/VerifyEmailScreen';
 import OnboardingScreen from '@screens/auth/OnboardingScreen';
+import ProfileCompletionScreen from '@screens/auth/ProfileCompletionScreen';
 
 // Main Screens
 import HomeScreen from '@screens/main/HomeScreen';
@@ -76,6 +79,7 @@ export type AuthStackParamList = {
   Register: undefined;
   ForgotPassword: undefined;
   VerifyEmail: { email: string };
+  ProfileCompletion: undefined;
 };
 
 export type MainTabParamList = {
@@ -194,14 +198,15 @@ const AuthNavigator = () => (
     <AuthStack.Screen name="Register" component={RegisterScreen} />
     <AuthStack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
     <AuthStack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
+    <AuthStack.Screen name="ProfileCompletion" component={ProfileCompletionScreen} />
   </AuthStack.Navigator>
 );
 
 // Main Tab Navigator
 const MainTabNavigator = () => (
   <MainTab.Navigator
-    screenOptions={({ route }) => ({
-      tabBarIcon: ({ focused, color, size }) => {
+    screenOptions={({ route }: { route: any }) => ({
+      tabBarIcon: ({ focused, color, size }: { focused: boolean; color: string; size: number }) => {
         let iconName: string;
 
         switch (route.name) {
@@ -226,12 +231,12 @@ const MainTabNavigator = () => (
 
         return <Icon name={iconName} size={size} color={color} />;
       },
-      tabBarActiveTintColor: '#2E7D32',
-      tabBarInactiveTintColor: '#757575',
+      tabBarActiveTintColor: '#1A2B4D',
+      tabBarInactiveTintColor: '#6B7280',
       tabBarStyle: {
         backgroundColor: '#FFFFFF',
         borderTopWidth: 1,
-        borderTopColor: '#E0E0E0',
+        borderTopColor: '#E5E7EB',
         paddingBottom: 5,
         paddingTop: 5,
         height: 60,
@@ -253,7 +258,7 @@ const PaymentNavigator = () => (
     screenOptions={{
       headerShown: true,
       headerStyle: {
-        backgroundColor: '#2E7D32',
+        backgroundColor: '#1A2B4D',
       },
       headerTintColor: '#FFFFFF',
       headerTitleStyle: {
@@ -263,7 +268,7 @@ const PaymentNavigator = () => (
   >
     <PaymentStack.Screen 
       name="SendMoney" 
-      component={SendMoneyFlowScreen}
+      component={SendMoneyFlowScreen as any}
       options={{ title: 'Send Money' }}
     />
     <PaymentStack.Screen 
@@ -290,7 +295,7 @@ const SettingsNavigator = () => (
     screenOptions={{
       headerShown: true,
       headerStyle: {
-        backgroundColor: '#2E7D32',
+        backgroundColor: '#1A2B4D',
       },
       headerTintColor: '#FFFFFF',
       headerTitleStyle: {
@@ -347,7 +352,7 @@ const CardsNavigator = () => (
     screenOptions={{
       headerShown: true,
       headerStyle: {
-        backgroundColor: '#2E7D32',
+        backgroundColor: '#1A2B4D',
       },
       headerTintColor: '#FFFFFF',
       headerTitleStyle: {
@@ -362,17 +367,17 @@ const CardsNavigator = () => (
     />
     <CardsStack.Screen
       name="OTPVerification"
-      component={OTPVerificationScreen}
+      component={OTPVerificationScreen as any}
       options={{ title: 'Verify OTP' }}
     />
     <CardsStack.Screen
       name="CardFeeConfirmation"
-      component={CardFeeConfirmationScreen}
+      component={CardFeeConfirmationScreen as any}
       options={{ title: 'Confirm Fee' }}
     />
     <CardsStack.Screen
       name="CardAdditionSuccess"
-      component={CardAdditionSuccessScreen}
+      component={CardAdditionSuccessScreen as any}
       options={{ title: 'Success', headerLeft: () => null }}
     />
   </CardsStack.Navigator>
@@ -384,7 +389,7 @@ const WithdrawalNavigator = () => (
     screenOptions={{
       headerShown: true,
       headerStyle: {
-        backgroundColor: '#2E7D32',
+        backgroundColor: '#1A2B4D',
       },
       headerTintColor: '#FFFFFF',
       headerTitleStyle: {
@@ -399,22 +404,22 @@ const WithdrawalNavigator = () => (
     />
     <WithdrawalStack.Screen
       name="SelectBank"
-      component={SelectBankScreen}
+      component={SelectBankScreen as any}
       options={{ title: 'Select Bank' }}
     />
     <WithdrawalStack.Screen
       name="WithdrawPIN"
-      component={WithdrawPINScreen}
+      component={WithdrawPINScreen as any}
       options={{ title: 'Enter PIN' }}
     />
     <WithdrawalStack.Screen
       name="WithdrawOTP"
-      component={WithdrawOTPScreen}
+      component={WithdrawOTPScreen as any}
       options={{ title: 'Verify OTP' }}
     />
     <WithdrawalStack.Screen
       name="WithdrawSuccess"
-      component={WithdrawSuccessScreen}
+      component={WithdrawSuccessScreen as any}
       options={{ title: 'Success', headerLeft: () => null }}
     />
   </WithdrawalStack.Navigator>

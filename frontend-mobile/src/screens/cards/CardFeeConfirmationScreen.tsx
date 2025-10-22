@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.textPrimary,
     marginBottom: 15,
   },
   cardPreview: {
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
   cardType: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.textPrimary,
   },
   cardNumber: {
     fontSize: 16,
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
   },
   feeLabel: {
     fontSize: 14,
-    color: colors.text,
+    color: colors.textPrimary,
     marginLeft: 8,
   },
   feeAmount: {
@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
   },
   balanceAmount: {
     fontSize: 16,
-    color: colors.text,
+    color: colors.textPrimary,
     fontWeight: '500',
   },
   remainingAmount: {
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
   termsTitle: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   termsText: {
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     fontSize: 16,
     fontWeight: '500',
-    color: colors.text,
+    color: colors.textPrimary,
   },
   confirmButton: {
     flex: 2,

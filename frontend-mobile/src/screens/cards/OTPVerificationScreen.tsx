@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
   cardType: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.textPrimary,
   },
   cardNumber: {
     fontSize: 16,
@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.textPrimary,
     marginBottom: 12,
     textAlign: 'center',
   },
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
   },
   phoneNumber: {
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.textPrimary,
   },
   otpContainer: {
     flexDirection: 'row',
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.textPrimary,
     backgroundColor: colors.surface,
   },
   otpInputFilled: {

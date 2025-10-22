@@ -13,7 +13,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, shadows } from '@theme/colors';
 import { formatCurrency } from '@utils/helpers';
-import QRCodeScanner from '@components/QRCodeScanner';
 import { QRUserScanner, UserQRData } from '@services/UserQRCodeService';
 
 interface SendMoneyScreenProps {

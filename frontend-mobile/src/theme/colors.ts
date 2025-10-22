@@ -16,6 +16,7 @@ export const colors = {
   
   // Text colors
   text: '#1A1A1A', // Black/dark grey
+  textPrimary: '#1A1A1A', // Alias for consistency
   textSecondary: '#6B7280',
   textLight: '#9CA3AF',
   textOnPrimary: '#FFFFFF',

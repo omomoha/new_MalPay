@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,49 +7,91 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
+  RefreshControl,
 } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, shadows } from '@theme/colors';
 import { formatCurrency } from '@utils/helpers';
+import { 
+  useGetWalletBalanceQuery,
+  useGetWalletTransactionsQuery,
+  useGetUserProfileQuery 
+} from '@store/api/api';
+import { useLoadingState } from '@services/LoadingStateService';
+import { handleAPIError } from '@services/ErrorHandlerService';
 
 const HomeScreen = () => {
   const [balanceVisible, setBalanceVisible] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const theme = useTheme();
 
-  const mockBalance = 32149.00;
-  const weeklySpending = 320.00;
+  // API queries
+  const { 
+    data: walletBalance, 
+    error: balanceError, 
+    refetch: refetchBalance,
+    isLoading: balanceLoading 
+  } = useGetWalletBalanceQuery();
 
-  const recentTransactions = [
-    {
-      id: '1',
-      type: 'Subscription payments',
-      icon: 'logo-vimeo',
-      iconColor: colors.vimeo,
-      time: '20 May, 13:28',
-      amount: -20.00,
-      isPositive: false,
-    },
-    {
-      id: '2',
-      type: 'Creator payments',
-      icon: 'logo-youtube',
-      iconColor: colors.youtube,
-      time: '20 May, 10:32',
-      amount: 12.99,
-      isPositive: true,
-    },
-    {
-      id: '3',
-      type: 'Purchase payments',
-      icon: 'logo-paypal',
-      iconColor: colors.paypal,
-      time: '20 May, 09:24',
-      amount: -32.00,
-      isPositive: false,
-    },
-  ];
+  const { 
+    data: transactions, 
+    error: transactionsError, 
+    refetch: refetchTransactions,
+    isLoading: transactionsLoading 
+  } = useGetWalletTransactionsQuery({
+    page: 1,
+    limit: 5,
+    status: 'completed'
+  });
+
+  const { 
+    data: userProfile, 
+    error: profileError, 
+    refetch: refetchProfile,
+    isLoading: profileLoading 
+  } = useGetUserProfileQuery();
+
+  // Loading state management
+  const { loadingState, setLoading, setError } = useLoadingState();
+
+  // Handle errors
+  useEffect(() => {
+    if (balanceError) {
+      handleAPIError(balanceError, { showAlert: false });
+    }
+    if (transactionsError) {
+      handleAPIError(transactionsError, { showAlert: false });
+    }
+    if (profileError) {
+      handleAPIError(profileError, { showAlert: false });
+    }
+  }, [balanceError, transactionsError, profileError]);
+
+  // Pull to refresh
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([
+        refetchBalance(),
+        refetchTransactions(),
+        refetchProfile(),
+      ]);
+    } catch (error) {
+      handleAPIError(error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  // Calculate weekly spending (mock calculation for now)
+  const weeklySpending = transactions?.reduce((total, transaction) => {
+    if (transaction.type === 'transfer' && transaction.status === 'completed') {
+      return total + transaction.amount;
+    }
+    return total;
+  }, 0) || 0;
 
   const actionButtons = [
     { id: 'send', title: 'Send', icon: 'paper-plane-outline' },
@@ -58,25 +100,46 @@ const HomeScreen = () => {
     { id: 'add', title: 'Add', icon: 'add-outline' },
   ];
 
-  const renderTransactionItem = (transaction: any) => (
-    <View key={transaction.id} style={styles.transactionItem}>
-      <View style={styles.transactionLeft}>
-        <View style={[styles.transactionIcon, { backgroundColor: transaction.iconColor }]}>
-          <Ionicons name={transaction.icon as any} size={20} color="white" />
+  const renderTransactionItem = (transaction: any) => {
+    const isPositive = transaction.type === 'deposit' || transaction.type === 'transfer';
+    const iconMap: Record<string, { icon: string; color: string }> = {
+      'transfer': { icon: 'send', color: colors.primary },
+      'deposit': { icon: 'add-circle', color: colors.success },
+      'withdrawal': { icon: 'remove-circle', color: colors.warning },
+      'fee': { icon: 'card', color: colors.error },
+    };
+    
+    const iconInfo = iconMap[transaction.type] || { icon: 'card', color: colors.textSecondary };
+    
+    return (
+      <View key={transaction.id} style={styles.transactionItem}>
+        <View style={styles.transactionLeft}>
+          <View style={[styles.transactionIcon, { backgroundColor: iconInfo.color }]}>
+            <Ionicons name={iconInfo.icon as any} size={20} color="white" />
+          </View>
+          <View style={styles.transactionDetails}>
+            <Text style={styles.transactionType}>
+              {transaction.description || `${transaction.type} payment`}
+            </Text>
+            <Text style={styles.transactionTime}>
+              {new Date(transaction.createdAt).toLocaleDateString('en-NG', {
+                day: 'numeric',
+                month: 'short',
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            </Text>
+          </View>
         </View>
-        <View style={styles.transactionDetails}>
-          <Text style={styles.transactionType}>{transaction.type}</Text>
-          <Text style={styles.transactionTime}>{transaction.time}</Text>
-        </View>
+        <Text style={[
+          styles.transactionAmount,
+          { color: isPositive ? colors.success : colors.error }
+        ]}>
+          {isPositive ? '+' : '-'}{formatCurrency(transaction.amount)}
+        </Text>
       </View>
-      <Text style={[
-        styles.transactionAmount,
-        { color: transaction.isPositive ? colors.positive : colors.negative }
-      ]}>
-        {transaction.isPositive ? '+' : ''}{formatCurrency(transaction.amount)}
-      </Text>
-    </View>
-  );
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -96,7 +159,9 @@ const HomeScreen = () => {
         <View style={styles.headerContent}>
           <View style={styles.welcomeSection}>
             <Text style={styles.welcomeText}>Welcome back,</Text>
-            <Text style={styles.userName}>Tanjiro Kamado</Text>
+            <Text style={styles.userName}>
+              {userProfile ? `${userProfile.firstName} ${userProfile.lastName}` : 'Loading...'}
+            </Text>
           </View>
           <View style={styles.headerActions}>
             <TouchableOpacity style={styles.headerButton}>
@@ -117,7 +182,10 @@ const HomeScreen = () => {
         <View style={styles.balanceSection}>
           <View style={styles.balanceRow}>
             <Text style={styles.balanceAmount}>
-              {balanceVisible ? formatCurrency(mockBalance) : '••••••'}
+              {balanceVisible 
+                ? (walletBalance ? formatCurrency(walletBalance.balances.NGN) : 'Loading...')
+                : '••••••'
+              }
             </Text>
             <TouchableOpacity 
               onPress={() => setBalanceVisible(!balanceVisible)}
@@ -145,17 +213,40 @@ const HomeScreen = () => {
       </LinearGradient>
 
       {/* Content */}
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        style={styles.content} 
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.primary}
+            colors={[colors.primary]}
+          />
+        }
+      >
         {/* Transactions Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Transactions</Text>
+            <Text style={styles.sectionTitle}>Recent Transactions</Text>
             <TouchableOpacity>
-              <Text style={styles.seeAllText}>See all ></Text>
+              <Text style={styles.seeAllText}>See all {'>'}</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.transactionsCard}>
-            {recentTransactions.map(renderTransactionItem)}
+            {transactionsLoading ? (
+              <View style={styles.loadingContainer}>
+                <Text style={styles.loadingText}>Loading transactions...</Text>
+              </View>
+            ) : transactions && transactions.length > 0 ? (
+              transactions.map(renderTransactionItem)
+            ) : (
+              <View style={styles.emptyContainer}>
+                <Ionicons name="receipt-outline" size={48} color={colors.textSecondary} />
+                <Text style={styles.emptyText}>No recent transactions</Text>
+                <Text style={styles.emptySubtext}>Your transaction history will appear here</Text>
+              </View>
+            )}
           </View>
         </View>
 
@@ -311,7 +402,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.textPrimary,
   },
   seeAllText: {
     fontSize: 14,
@@ -322,7 +413,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
-    ...shadows.card,
+    ...shadows.small,
   },
   transactionItem: {
     flexDirection: 'row',
@@ -330,7 +421,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
+    borderBottomColor: colors.border,
   },
   transactionLeft: {
     flexDirection: 'row',
@@ -351,7 +442,7 @@ const styles = StyleSheet.create({
   transactionType: {
     fontSize: 14,
     fontWeight: '500',
-    color: colors.text,
+    color: colors.textPrimary,
     marginBottom: 2,
   },
   transactionTime: {
@@ -369,7 +460,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    ...shadows.card,
+    ...shadows.small,
   },
   weeklySpendingContent: {
     flex: 1,
@@ -377,7 +468,7 @@ const styles = StyleSheet.create({
   weeklySpendingTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.text,
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   weeklySpendingSubtitle: {
@@ -386,6 +477,30 @@ const styles = StyleSheet.create({
   },
   weeklySpendingIcon: {
     marginLeft: 12,
+  },
+  loadingContainer: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 14,
+    color: colors.textSecondary,
+  },
+  emptyContainer: {
+    padding: 40,
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: colors.textPrimary,
+    marginTop: 12,
+    marginBottom: 4,
+  },
+  emptySubtext: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    textAlign: 'center',
   },
 });
 

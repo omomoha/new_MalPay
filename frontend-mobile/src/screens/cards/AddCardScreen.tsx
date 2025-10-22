@@ -33,6 +33,20 @@ const AddCardScreen: React.FC<AddCardScreenProps> = ({ navigation }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [cardType, setCardType] = useState<'visa' | 'mastercard' | 'amex' | 'discover' | null>(null);
+  const [existingCards, setExistingCards] = useState<any[]>([]);
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [cardAdditionFee] = useState(50); // 50 Naira fee
+
+  // Load existing cards and wallet balance
+  useEffect(() => {
+    // TODO: Fetch existing cards and wallet balance from API
+    // For now, using mock data
+    setExistingCards([
+      { id: '1', cardNumberMasked: '4532 **** **** 1234', cardType: 'visa' },
+      { id: '2', cardNumberMasked: '5555 **** **** 5678', cardType: 'mastercard' },
+    ]);
+    setWalletBalance(5000); // Mock balance
+  }, []);
 
   // Detect card type based on card number
   useEffect(() => {
@@ -92,6 +106,21 @@ const AddCardScreen: React.FC<AddCardScreenProps> = ({ navigation }) => {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
+
+    // Check card limit (max 3 cards)
+    if (existingCards.length >= 3) {
+      Alert.alert('Card Limit Reached', 'You can only add up to 3 cards. Please remove a card before adding a new one.');
+      return false;
+    }
+
+    // Check wallet balance for fee
+    if (walletBalance < cardAdditionFee) {
+      Alert.alert(
+        'Insufficient Balance', 
+        `Card addition requires ₦${cardAdditionFee} fee. Your current balance is ₦${walletBalance}. Please top up your wallet.`
+      );
+      return false;
+    }
 
     // Validate card number
     if (!formData.cardNumber.trim()) {
@@ -406,7 +435,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.textPrimary,
     marginBottom: 15,
   },
   cardTemplate: {
@@ -470,7 +499,7 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 14,
     fontWeight: '500',
-    color: colors.text,
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   inputContainer: {
@@ -490,7 +519,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
-    color: colors.text,
+    color: colors.textPrimary,
     marginLeft: 12,
   },
   errorText: {
@@ -519,7 +548,7 @@ const styles = StyleSheet.create({
   },
   feeLabel: {
     fontSize: 14,
-    color: colors.text,
+    color: colors.textPrimary,
     fontWeight: '500',
   },
   feeAmount: {

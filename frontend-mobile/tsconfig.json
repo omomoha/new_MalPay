@@ -1,6 +1,18 @@
 {
-  "extends": "@tsconfig/react-native/tsconfig.json",
   "compilerOptions": {
+    "target": "esnext",
+    "lib": ["es2017"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
     "baseUrl": "./src",
     "paths": {
       "@/*": ["*"],
@@ -16,16 +28,7 @@
       "@theme/*": ["theme/*"],
       "@assets/*": ["assets/*"],
       "@config/*": ["config/*"]
-    },
-    "strict": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "jsx": "react-jsx",
-    "moduleResolution": "node",
-    "noEmit": true,
-    "isolatedModules": true
+    }
   },
   "include": [
     "src/**/*",

@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import AddCardScreen from '../../screens/cards/AddCardScreen';
+import AddCardScreen from '../AddCardScreen';
 
 // Mock CardEncryption
-jest.mock('../../utils/cardEncryption', () => ({
+jest.mock('@utils/cardEncryption', () => ({
   encryptCardData: jest.fn(() => ({
     encryptedCardNumber: 'encrypted123',
     encryptedExpiryDate: 'encrypted12/26',
@@ -28,11 +28,11 @@ describe('AddCardScreen', () => {
   });
 
   test('renders correctly', () => {
-    const { getByText, getByPlaceholderText } = render(
+    const { getAllByText, getByPlaceholderText } = render(
       <AddCardScreen navigation={mockNavigation} />
     );
 
-    expect(getByText('Add Card')).toBeTruthy();
+    expect(getAllByText('Add Card')[0]).toBeTruthy();
     expect(getByPlaceholderText('1234 5678 9012 3456')).toBeTruthy();
     expect(getByPlaceholderText('Enter cardholder name')).toBeTruthy();
     expect(getByPlaceholderText('MM/YY')).toBeTruthy();
@@ -60,11 +60,11 @@ describe('AddCardScreen', () => {
   });
 
   test('validates form before submission', async () => {
-    const { getByText } = render(
+    const { getAllByText } = render(
       <AddCardScreen navigation={mockNavigation} />
     );
 
-    const submitButton = getByText('Add Card');
+    const submitButton = getAllByText('Add Card')[0];
     fireEvent.press(submitButton);
 
     await waitFor(() => {
@@ -73,7 +73,7 @@ describe('AddCardScreen', () => {
   });
 
   test('submits form with valid data', async () => {
-    const { getByPlaceholderText, getByText } = render(
+    const { getByPlaceholderText, getAllByText } = render(
       <AddCardScreen navigation={mockNavigation} />
     );
 
@@ -84,7 +84,7 @@ describe('AddCardScreen', () => {
     fireEvent.changeText(getByPlaceholderText('123'), '123');
 
     // Submit
-    fireEvent.press(getByText('Add Card'));
+    fireEvent.press(getAllByText('Add Card')[0]);
 
     await waitFor(() => {
       expect(mockNavigation.navigate).toHaveBeenCalledWith('OTPVerification', expect.any(Object));

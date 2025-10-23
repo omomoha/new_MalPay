@@ -50,11 +50,11 @@ describe('Security Test Suite', () => {
       const encryptedPIN = CardEncryption.encryptPIN(correctPIN, userId);
       
       const startCorrect = Date.now();
-      await CardEncryption.verifyPIN(correctPIN, encryptedPIN, userId);
+      CardEncryption.verifyPIN(correctPIN, encryptedPIN, userId);
       const timeCorrect = Date.now() - startCorrect;
       
       const startWrong = Date.now();
-      await CardEncryption.verifyPIN(wrongPIN, encryptedPIN, userId);
+      CardEncryption.verifyPIN(wrongPIN, encryptedPIN, userId);
       const timeWrong = Date.now() - startWrong;
       
       // Timing difference should be minimal (within 100ms)

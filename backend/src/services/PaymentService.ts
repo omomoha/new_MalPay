@@ -334,7 +334,9 @@ export class PaymentService {
     if (amount <= 1000) {
       return 0;
     }
-    return Math.min(amount * 0.001, 2000);
+    // Calculate 0.1% charge and round to avoid floating point precision issues
+    const charge = amount * 0.001;
+    return Math.min(Math.round(charge * 1000) / 1000, 2000);
   }
 
   /**

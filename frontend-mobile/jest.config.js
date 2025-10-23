@@ -63,7 +63,7 @@ module.exports = {
   
   // Transform ignore patterns
   transformIgnorePatterns: [
-    'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|react-native-paper|react-native-vector-icons|react-native-reanimated|react-native-gesture-handler|react-native-screens|react-native-safe-area-context|@reduxjs/toolkit|react-redux|msw|until-async|@testing-library)',
+    'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|expo-linear-gradient|@expo/vector-icons|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|react-native-paper|react-native-vector-icons|react-native-reanimated|react-native-gesture-handler|react-native-screens|react-native-safe-area-context|@reduxjs/toolkit|react-redux|msw|until-async|@testing-library|crypto-js|@testing-library/react-native|msw/node)',
   ],
   
   // Module name mapping
@@ -80,6 +80,9 @@ module.exports = {
     '^@theme/(.*)$': '<rootDir>/src/theme/$1',
     '^@assets/(.*)$': '<rootDir>/src/assets/$1',
     '^@config/(.*)$': '<rootDir>/src/config/$1',
+    '^react-native$': '<rootDir>/src/test/__mocks__/react-native.js',
+    '^expo-linear-gradient$': '<rootDir>/src/test/__mocks__/expo-linear-gradient.js',
+    '^@expo/vector-icons$': '<rootDir>/src/test/__mocks__/@expo/vector-icons.js',
   },
   
   // Test environment
@@ -133,11 +136,7 @@ module.exports = {
     },
   ],
   
-  // Custom matchers
-  setupFilesAfterEnv: [
-    '<rootDir>/src/test/setup.ts',
-    '<rootDir>/src/test/customMatchers.ts',
-  ],
+  // Custom matchers are included in setup.ts
   
   // Mock files
   moduleFileExtensions: [

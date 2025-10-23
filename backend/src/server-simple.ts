@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { InputSanitizationService } from './middleware/inputSanitization';
+// import balanceRoutes from './routes/balanceRoutes';
 // import { SecurityMonitoringService } from './services/SecurityMonitoringService'; // Disabled for development
 
 const app = express();
@@ -31,7 +32,7 @@ const PORT = process.env.PORT || 3000;
 // Security middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3001',
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true,
 }));
 
@@ -256,26 +257,131 @@ app.get('/api/v1/auth/profile-completion', (req, res) => {
 app.get('/api/v1/bank-accounts', (req, res) => {
   res.json({
     success: true,
-    bankAccounts: [],
+    bankAccounts: [
+      {
+        id: 'bank-1',
+        accountName: 'Demo User',
+        accountNumber: '1234567890',
+        bankName: 'Access Bank',
+        bankCode: '044',
+        isPrimary: true,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        id: 'bank-2',
+        accountName: 'Demo User',
+        accountNumber: '0987654321',
+        bankName: 'GTBank',
+        bankCode: '058',
+        isPrimary: false,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }
+    ],
   });
 });
 
 app.get('/api/v1/cards', (req, res) => {
   res.json({
     success: true,
-    cards: [],
+    cards: [
+      {
+        id: 'card-1',
+        cardNumberMasked: '4532 **** **** 9012',
+        cardType: 'visa',
+        expiryMonth: 12,
+        expiryYear: 2026,
+        cardholderName: 'Demo User',
+        isDefault: true,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        id: 'card-2',
+        cardNumberMasked: '5555 **** **** 4444',
+        cardType: 'mastercard',
+        expiryMonth: 8,
+        expiryYear: 2025,
+        cardholderName: 'Demo User',
+        isDefault: false,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }
+    ],
   });
 });
 
 app.get('/api/v1/payments/transactions', (req, res) => {
   res.json({
     success: true,
-    transactions: [],
+    transactions: [
+      {
+        id: 'tx-1',
+        type: 'transfer',
+        status: 'completed',
+        amount: 50000,
+        currency: 'NGN',
+        description: 'Transfer to John Doe',
+        recipientEmail: 'john@example.com',
+        recipientName: 'John Doe',
+        senderEmail: 'demo@malpay.com',
+        senderName: 'Demo User',
+        cryptoProcessorFee: 0.5,
+        malpayCharge: 50,
+        totalFees: 50.5,
+        exchangeRate: 1,
+        processor: 'tron',
+        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        completedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: 'tx-2',
+        type: 'withdrawal',
+        status: 'completed',
+        amount: 25000,
+        currency: 'NGN',
+        description: 'Withdrawal to bank account',
+        senderEmail: 'demo@malpay.com',
+        senderName: 'Demo User',
+        cryptoProcessorFee: 0.3,
+        malpayCharge: 25,
+        totalFees: 25.3,
+        exchangeRate: 1,
+        processor: 'polygon',
+        createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+        updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+        completedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: 'tx-3',
+        type: 'deposit',
+        status: 'completed',
+        amount: 100000,
+        currency: 'NGN',
+        description: 'Deposit from card',
+        senderEmail: 'demo@malpay.com',
+        senderName: 'Demo User',
+        cryptoProcessorFee: 1.0,
+        malpayCharge: 100,
+        totalFees: 101.0,
+        exchangeRate: 1,
+        processor: 'ethereum',
+        createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+        updatedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+        completedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+      }
+    ],
     pagination: {
       page: 1,
       limit: 5,
-      total: 0,
-      totalPages: 0,
+      total: 3,
+      totalPages: 1,
     },
   });
 });
@@ -508,6 +614,9 @@ app.post('/api/v1/withdrawals', authenticateToken, (req, res) => {
     message: 'Withdrawal request submitted successfully',
   });
 });
+
+// Balance routes (Mastercard balance checking)
+// app.use('/api/v1/balance', authenticateToken, balanceRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

@@ -6,14 +6,19 @@ import {
   Typography,
   Button,
   Avatar,
-  Chip,
   List,
   ListItem,
   ListItemText,
   ListItemAvatar,
-  ListItemSecondaryAction,
   IconButton,
   Divider,
+  Fab,
+  AppBar,
+  Toolbar,
+  Badge,
+  Drawer,
+  ListItemIcon,
+  ListItemButton,
 } from '@mui/material';
 import {
   AccountBalance,
@@ -22,9 +27,18 @@ import {
   TrendingUp,
   QrCode,
   Add,
-  MoreVert,
-  ArrowUpward,
-  ArrowDownward,
+  Notifications,
+  Visibility,
+  VisibilityOff,
+  AccountBalanceWallet,
+  AttachMoney,
+  Security,
+  Menu,
+  Dashboard as DashboardIcon,
+  History,
+  Settings,
+  Person,
+  Logout,
 } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../store';
@@ -37,305 +51,470 @@ const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.auth);
-  const { cards } = useSelector((state: RootState) => state.cards as any);
-  const { transactions } = useSelector((state: RootState) => state.transactions as any);
-  const { bankAccounts } = useSelector((state: RootState) => state.bankAccounts as any);
 
-  const [balance] = useState(0);
+  const [balance] = useState(32149.00);
+  const [showBalance, setShowBalance] = useState(true);
+  const [weeklySpending] = useState(320);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchCards());
-    dispatch(fetchTransactions({ limit: 5 }));
-    dispatch(fetchBankAccounts());
+    // Initialize any required data
   }, [dispatch]);
 
   const quickActions = [
     {
-      title: 'Send Money',
-      icon: <Send />,
-      color: 'primary',
+      title: 'Send',
+      icon: <Send sx={{ fontSize: 24 }} />,
+      color: '#1976d2',
       onClick: () => navigate('/send-money'),
     },
     {
-      title: 'Add Card',
-      icon: <CreditCard />,
-      color: 'secondary',
-      onClick: () => navigate('/cards/add'),
-    },
-    {
       title: 'Withdraw',
-      icon: <AccountBalance />,
-      color: 'success',
+      icon: <AccountBalance sx={{ fontSize: 24 }} />,
+      color: '#2e7d32',
       onClick: () => navigate('/withdraw'),
     },
     {
-      title: 'QR Code',
-      icon: <QrCode />,
-      color: 'info',
-      onClick: () => navigate('/qr-code'),
+      title: 'Invest',
+      icon: <AttachMoney sx={{ fontSize: 24 }} />,
+      color: '#ed6c02',
+      onClick: () => navigate('/invest'),
+    },
+    {
+      title: 'Add',
+      icon: <Add sx={{ fontSize: 24 }} />,
+      color: '#9c27b0',
+      onClick: () => navigate('/cards'),
     },
   ];
 
-  const recentTransactions = transactions.slice(0, 5);
+  const recentTransactions = [
+    {
+      id: '1',
+      title: 'Subscription payments',
+      subtitle: '20 May, 13:28',
+      amount: -20.00,
+      icon: 'V',
+      iconColor: '#1976d2',
+    },
+    {
+      id: '2',
+      title: 'Creator payments',
+      subtitle: '20 May, 10:32',
+      amount: 12.99,
+      icon: 'YT',
+      iconColor: '#ff0000',
+    },
+    {
+      id: '3',
+      title: 'Purchase payments',
+      subtitle: '20 May, 09:24',
+      amount: -32.00,
+      icon: 'PP',
+      iconColor: '#0070ba',
+    },
+  ];
 
-  const getTransactionIcon = (type: string) => {
-    switch (type) {
-      case 'transfer':
-        return <ArrowUpward color="primary" />;
-      case 'withdrawal':
-        return <ArrowDownward color="error" />;
-      default:
-        return <TrendingUp color="success" />;
-    }
+
+  const navigationItems = [
+    { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
+    { text: 'Balance', icon: <AccountBalanceWallet />, path: '/balance' },
+    { text: 'Cards', icon: <CreditCard />, path: '/cards' },
+    { text: 'Send Money', icon: <Send />, path: '/send-money' },
+    { text: 'Transaction History', icon: <History />, path: '/transactions' },
+    { text: 'Bank Accounts', icon: <AccountBalance />, path: '/bank-accounts' },
+    { text: 'Withdraw', icon: <TrendingUp />, path: '/withdraw' },
+    { text: 'QR Code', icon: <QrCode />, path: '/qr-code' },
+  ];
+
+  const handleSidebarToggle = () => {
+    setSidebarOpen(!sidebarOpen);
   };
 
-  const getTransactionColor = (type: string) => {
-    switch (type) {
-      case 'transfer':
-        return 'primary';
-      case 'withdrawal':
-        return 'error';
-      default:
-        return 'success';
-    }
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    setSidebarOpen(false);
   };
 
   return (
-    <Box>
-      {/* Welcome Section */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Welcome back, {user?.firstName || 'User'}!
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Here's what's happening with your account today.
-        </Typography>
-      </Box>
+    <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
+      {/* Mobile App Bar */}
+      <AppBar 
+        position="static" 
+        sx={{ 
+          bgcolor: '#1976d2', 
+          boxShadow: 2,
+          px: 2,
+          py: 1
+        }}
+      >
+        <Toolbar sx={{ justifyContent: 'space-between', px: 0 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              onClick={handleSidebarToggle}
+              sx={{ mr: 1 }}
+            >
+              <Menu />
+            </IconButton>
+            <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
+              Dashboard
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <IconButton color="inherit">
+              <Settings />
+            </IconButton>
+            <Badge badgeContent={3} color="error">
+              <IconButton color="inherit">
+                <Notifications />
+              </IconButton>
+            </Badge>
+            <IconButton color="inherit">
+              <Avatar sx={{ width: 32, height: 32, bgcolor: 'rgba(255,255,255,0.2)' }}>
+                U
+              </Avatar>
+            </IconButton>
+          </Box>
+        </Toolbar>
+      </AppBar>
 
-      {/* Balance Card */}
-      <Card sx={{ mb: 4, background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)', color: 'white' }}>
-        <CardContent>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Box>
-              <Typography variant="h6" gutterBottom>
-                Total Balance
-              </Typography>
-              <Typography variant="h3" component="div" sx={{ fontWeight: 'bold' }}>
-                ₦{balance.toLocaleString()}
-              </Typography>
-              <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                Available for transfers and withdrawals
-              </Typography>
-            </Box>
-            <Avatar sx={{ bgcolor: 'rgba(255,255,255,0.2)', width: 64, height: 64 }}>
-              <AccountBalance sx={{ fontSize: 32 }} />
+      {/* Main Content */}
+      <Box sx={{ px: 2, pb: 10 }}>
+        {/* Welcome Section */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+          <Box>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'black' }}>
+              Welcome back, {user?.firstName || 'Tanjiro Kamado'}!
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Badge badgeContent={3} color="error">
+              <Notifications sx={{ color: 'black' }} />
+            </Badge>
+            <Avatar sx={{ bgcolor: '#1976d2', position: 'relative' }}>
+              <Security sx={{ fontSize: 20 }} />
+              <Box
+                sx={{
+                  position: 'absolute',
+                  bottom: -2,
+                  right: -2,
+                  width: 16,
+                  height: 16,
+                  bgcolor: '#1976d2',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Security sx={{ fontSize: 10, color: 'white' }} />
+              </Box>
             </Avatar>
           </Box>
-        </CardContent>
-      </Card>
+        </Box>
 
-      {/* Quick Actions */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h5" component="h2" gutterBottom>
-          Quick Actions
-        </Typography>
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(4, 1fr)' }, gap: 2 }}>
+        {/* Balance Card */}
+        <Card
+          sx={{
+            background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
+            color: 'white',
+            borderRadius: 3,
+            mb: 3,
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <CardContent sx={{ p: 3 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                Account Balance
+              </Typography>
+              <IconButton
+                onClick={() => setShowBalance(!showBalance)}
+                sx={{ color: 'white', p: 0.5 }}
+              >
+                {showBalance ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </Box>
+            <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1 }}>
+              {showBalance ? `$${balance.toLocaleString()}` : '••••••'}
+            </Typography>
+          </CardContent>
+        </Card>
+
+        {/* Quick Actions */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-around', mb: 4 }}>
           {quickActions.map((action, index) => (
-            <Card
+            <Box
               key={index}
               sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease-in-out',
-                '&:hover': {
-                  transform: 'translateY(-2px)',
-                  boxShadow: 4,
-                },
+                transition: 'transform 0.2s',
+                '&:hover': { transform: 'scale(1.05)' },
               }}
               onClick={action.onClick}
             >
-              <CardContent sx={{ textAlign: 'center', py: 3 }}>
-                <Avatar sx={{ bgcolor: `${action.color}.main`, mx: 'auto', mb: 2 }}>
+              <Box
+                sx={{
+                  width: 60,
+                  height: 60,
+                  borderRadius: '50%',
+                  bgcolor: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  mb: 1,
+                  boxShadow: 2,
+                }}
+              >
+                <Box sx={{ color: action.color }}>
                   {action.icon}
-                </Avatar>
-                <Typography variant="body1" fontWeight="medium">
-                  {action.title}
-                </Typography>
-              </CardContent>
-            </Card>
+                </Box>
+              </Box>
+              <Typography variant="body2" sx={{ color: 'black', fontWeight: 'medium' }}>
+                {action.title}
+              </Typography>
+            </Box>
           ))}
         </Box>
-      </Box>
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
-          {/* Cards Overview */}
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h6" component="h3">
-                  Your Cards
+        {/* Transactions Section */}
+        <Card sx={{ borderRadius: 3, mb: 3 }}>
+          <CardContent sx={{ p: 0 }}>
+            <Box sx={{ p: 3, pb: 2 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                  Transactions
                 </Typography>
                 <Button
                   size="small"
-                  startIcon={<Add />}
-                  onClick={() => navigate('/cards/add')}
+                  onClick={() => navigate('/transactions')}
+                  sx={{ textTransform: 'none', color: '#1976d2' }}
                 >
-                  Add Card
+                  See all &gt;
                 </Button>
               </Box>
-              <List>
-                {cards.length === 0 ? (
-                  <ListItem>
-                    <ListItemText
-                      primary="No cards added yet"
-                      secondary="Add a card to start making payments"
-                    />
-                  </ListItem>
-                ) : (
-                  cards.map((card: any) => (
-                    <ListItem key={card.id}>
-                      <ListItemAvatar>
-                        <Avatar sx={{ bgcolor: 'primary.main' }}>
-                          <CreditCard />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={card.cardNumberMasked}
-                        secondary={`${card.cardholderName} • ${card.cardType.toUpperCase()}`}
-                      />
-                      <ListItemSecondaryAction>
-                        {card.isDefault && (
-                          <Chip label="Default" size="small" color="primary" />
-                        )}
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                  ))
-                )}
-              </List>
-            </CardContent>
-          </Card>
-
-          {/* Bank Accounts Overview */}
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h6" component="h3">
-                  Bank Accounts
-                </Typography>
-                <Button
-                  size="small"
-                  startIcon={<Add />}
-                  onClick={() => navigate('/bank-accounts/add')}
-                >
-                  Add Account
-                </Button>
-              </Box>
-              <List>
-                {bankAccounts.length === 0 ? (
-                  <ListItem>
-                    <ListItemText
-                      primary="No bank accounts added yet"
-                      secondary="Add a bank account to receive withdrawals"
-                    />
-                  </ListItem>
-                ) : (
-                  bankAccounts.map((account: any) => (
-                    <ListItem key={account.id}>
-                      <ListItemAvatar>
-                        <Avatar sx={{ bgcolor: 'success.main' }}>
-                          <AccountBalance />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={account.accountName}
-                        secondary={`${account.bankName} • ${account.accountNumber.slice(-4)}`}
-                      />
-                      <ListItemSecondaryAction>
-                        {account.isPrimary && (
-                          <Chip label="Primary" size="small" color="success" />
-                        )}
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                  ))
-                )}
-              </List>
-            </CardContent>
-          </Card>
-        </Box>
-
-        {/* Recent Transactions */}
-        <Card>
-          <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h6" component="h3">
-                Recent Transactions
-              </Typography>
-              <Button
-                size="small"
-                onClick={() => navigate('/transactions')}
-              >
-                View All
-              </Button>
             </Box>
-            <List>
-              {recentTransactions.length === 0 ? (
-                <ListItem>
-                  <ListItemText
-                    primary="No transactions yet"
-                    secondary="Your transaction history will appear here"
-                  />
-                </ListItem>
-              ) : (
-                recentTransactions.map((transaction: any) => (
-                  <React.Fragment key={transaction.id}>
-                    <ListItem>
-                      <ListItemAvatar>
-                        <Avatar sx={{ bgcolor: `${getTransactionColor(transaction.type)}.main` }}>
-                          {getTransactionIcon(transaction.type)}
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Typography variant="body1" fontWeight="medium">
-                              {transaction.description || `${transaction.type} transaction`}
-                            </Typography>
-                            <Typography
-                              variant="body1"
-                              fontWeight="bold"
-                              color={transaction.type === 'withdrawal' ? 'error.main' : 'success.main'}
-                            >
-                              {transaction.type === 'withdrawal' ? '-' : '+'}₦{transaction.amount.toLocaleString()}
-                            </Typography>
-                          </Box>
-                        }
-                        secondary={
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Typography variant="body2" color="text.secondary">
-                              {new Date(transaction.createdAt).toLocaleDateString()}
-                            </Typography>
-                            <Chip
-                              label={transaction.status}
-                              size="small"
-                              color={transaction.status === 'completed' ? 'success' : 'default'}
-                            />
-                          </Box>
-                        }
-                      />
-                      <ListItemSecondaryAction>
-                        <IconButton edge="end">
-                          <MoreVert />
-                        </IconButton>
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                    <Divider />
-                  </React.Fragment>
-                ))
-              )}
+            <List sx={{ p: 0 }}>
+              {recentTransactions.map((transaction, index) => (
+                <React.Fragment key={transaction.id}>
+                  <ListItem sx={{ px: 3, py: 2 }}>
+                    <ListItemAvatar>
+                      <Box
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: 'white',
+                          fontSize: '14px',
+                          fontWeight: 'bold',
+                          bgcolor: transaction.iconColor,
+                        }}
+                      >
+                        {transaction.icon}
+                      </Box>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={
+                        <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+                          {transaction.title}
+                        </Typography>
+                      }
+                      secondary={
+                        <Typography variant="body2" color="text.secondary">
+                          {transaction.subtitle}
+                        </Typography>
+                      }
+                    />
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontWeight: 'bold',
+                        color: transaction.amount > 0 ? '#2e7d32' : '#d32f2f',
+                      }}
+                    >
+                      {transaction.amount > 0 ? '+' : ''}${Math.abs(transaction.amount).toFixed(2)}
+                    </Typography>
+                  </ListItem>
+                  {index < recentTransactions.length - 1 && <Divider />}
+                </React.Fragment>
+              ))}
             </List>
           </CardContent>
         </Card>
+
+        {/* Weekly Spending */}
+        <Card sx={{ borderRadius: 3, bgcolor: 'white' }}>
+          <CardContent sx={{ p: 3 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                  Weekly spending: ${weeklySpending}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  You're staying right on track
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 2,
+                  bgcolor: '#f5f5f5',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <AccountBalanceWallet sx={{ color: '#666' }} />
+              </Box>
+            </Box>
+          </CardContent>
+        </Card>
       </Box>
+
+      {/* Floating Action Button */}
+      <Fab
+        color="primary"
+        sx={{
+          position: 'fixed',
+          bottom: 20,
+          right: 20,
+          bgcolor: '#1976d2',
+        }}
+        onClick={() => navigate('/send-money')}
+      >
+        <Send />
+      </Fab>
+
+      {/* Sidebar Drawer */}
+      <Drawer
+        anchor="left"
+        open={sidebarOpen}
+        onClose={handleSidebarToggle}
+        sx={{
+          '& .MuiDrawer-paper': {
+            width: 280,
+            bgcolor: '#f8f9fa',
+          },
+        }}
+      >
+        <Box sx={{ p: 2 }}>
+          {/* User Profile Section */}
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, p: 2, bgcolor: 'white', borderRadius: 2 }}>
+            <Avatar sx={{ bgcolor: '#1976d2', mr: 2, width: 48, height: 48 }}>
+              <Person />
+            </Avatar>
+            <Box>
+              <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'black' }}>
+                {user?.firstName || 'Tanjiro Kamado'}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Premium User
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Navigation Menu */}
+          <List sx={{ px: 1 }}>
+            {navigationItems.map((item, index) => (
+              <ListItem key={index} disablePadding sx={{ mb: 1 }}>
+                <ListItemButton
+                  onClick={() => handleNavigation(item.path)}
+                  sx={{
+                    borderRadius: 2,
+                    '&:hover': {
+                      bgcolor: '#e3f2fd',
+                    },
+                    '&.Mui-selected': {
+                      bgcolor: '#1976d2',
+                      color: 'white',
+                      '&:hover': {
+                        bgcolor: '#1565c0',
+                      },
+                      '& .MuiListItemIcon-root': {
+                        color: 'white',
+                      },
+                    },
+                  }}
+                >
+                  <ListItemIcon sx={{ minWidth: 40, color: '#666' }}>
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText 
+                    primary={item.text}
+                    primaryTypographyProps={{
+                      fontWeight: 'medium',
+                    }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+
+          <Divider sx={{ my: 2 }} />
+
+          {/* Settings and Logout */}
+          <List sx={{ px: 1 }}>
+            <ListItem disablePadding sx={{ mb: 1 }}>
+              <ListItemButton
+                onClick={() => handleNavigation('/settings')}
+                sx={{
+                  borderRadius: 2,
+                  '&:hover': {
+                    bgcolor: '#e3f2fd',
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 40, color: '#666' }}>
+                  <Settings />
+                </ListItemIcon>
+                <ListItemText 
+                  primary="Settings"
+                  primaryTypographyProps={{
+                    fontWeight: 'medium',
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton
+                onClick={() => {
+                  // Handle logout
+                  console.log('Logout clicked');
+                  setSidebarOpen(false);
+                }}
+                sx={{
+                  borderRadius: 2,
+                  '&:hover': {
+                    bgcolor: '#ffebee',
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 40, color: '#d32f2f' }}>
+                  <Logout />
+                </ListItemIcon>
+                <ListItemText 
+                  primary="Logout"
+                  primaryTypographyProps={{
+                    fontWeight: 'medium',
+                    color: '#d32f2f',
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          </List>
+        </Box>
+      </Drawer>
     </Box>
   );
 };

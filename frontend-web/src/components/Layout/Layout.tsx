@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   Box,
   Drawer,
@@ -27,6 +27,7 @@ import {
   Send as SendIcon,
   History as HistoryIcon,
   AccountBalance as AccountBalanceIcon,
+  AccountBalanceWallet as AccountBalanceWalletIcon,
   AccountCircle as AccountCircleIcon,
   Settings as SettingsIcon,
   QrCode as QrCodeIcon,
@@ -34,6 +35,7 @@ import {
   Logout as LogoutIcon,
   Brightness4 as Brightness4Icon,
   Brightness7 as Brightness7Icon,
+  TrendingUp as TrendingUpIcon,
 } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../store';
@@ -45,17 +47,19 @@ const drawerWidth = 280;
 
 const menuItems = [
   { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
+  { text: 'Balance', icon: <AccountBalanceWalletIcon />, path: '/balance' },
   { text: 'Cards', icon: <CreditCardIcon />, path: '/cards' },
   { text: 'Send Money', icon: <SendIcon />, path: '/send-money' },
   { text: 'Transaction History', icon: <HistoryIcon />, path: '/transactions' },
   { text: 'Bank Accounts', icon: <AccountBalanceIcon />, path: '/bank-accounts' },
-  { text: 'Withdraw', icon: <AccountBalanceIcon />, path: '/withdraw' },
+  { text: 'Withdraw', icon: <TrendingUpIcon />, path: '/withdraw' },
   { text: 'QR Code', icon: <QrCodeIcon />, path: '/qr-code' },
 ];
 
 const Layout: React.FC = () => {
   const theme = useTheme();
   const location = useLocation();
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   
@@ -117,6 +121,7 @@ const Layout: React.FC = () => {
             <ListItemButton
               selected={location.pathname === item.path}
               onClick={() => {
+                navigate(item.path);
                 if (isMobile) {
                   dispatch(setSidebarOpen(false));
                 }
@@ -148,8 +153,27 @@ const Layout: React.FC = () => {
       <List>
         <ListItem disablePadding>
           <ListItemButton
-            onClick={() => dispatch(toggleSidebar())}
-            sx={{ mx: 1, borderRadius: 2 }}
+            onClick={() => {
+              navigate('/settings');
+              if (isMobile) {
+                dispatch(setSidebarOpen(false));
+              }
+            }}
+            selected={location.pathname === '/settings'}
+            sx={{ 
+              mx: 1, 
+              borderRadius: 2,
+              '&.Mui-selected': {
+                backgroundColor: 'primary.main',
+                color: 'white',
+                '&:hover': {
+                  backgroundColor: 'primary.dark',
+                },
+                '& .MuiListItemIcon-root': {
+                  color: 'white',
+                },
+              },
+            }}
           >
             <ListItemIcon sx={{ minWidth: 40 }}>
               <SettingsIcon />
@@ -262,13 +286,18 @@ const Layout: React.FC = () => {
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleProfileMenuClose}
-        onClick={handleProfileMenuClose}
       >
-        <MenuItem onClick={handleProfileMenuClose}>
+        <MenuItem onClick={() => {
+          navigate('/profile');
+          handleProfileMenuClose();
+        }}>
           <AccountCircleIcon sx={{ mr: 1 }} />
           Profile
         </MenuItem>
-        <MenuItem onClick={handleProfileMenuClose}>
+        <MenuItem onClick={() => {
+          navigate('/settings');
+          handleProfileMenuClose();
+        }}>
           <SettingsIcon sx={{ mr: 1 }} />
           Settings
         </MenuItem>

@@ -1,5 +1,6 @@
 import 'react-native-gesture-handler/jestSetup';
 import '@testing-library/jest-native/extend-expect';
+import './customMatchers';
 
 // Mock react-native-reanimated
 jest.mock('react-native-reanimated', () => {
@@ -66,6 +67,26 @@ jest.mock('react-native-paper', () => {
   };
 });
 
+// Mock expo-linear-gradient
+jest.mock('expo-linear-gradient', () => ({
+  LinearGradient: 'LinearGradient',
+}));
+
+// Mock @expo/vector-icons
+jest.mock('@expo/vector-icons', () => ({
+  Ionicons: 'Ionicons',
+  MaterialIcons: 'MaterialIcons',
+  MaterialCommunityIcons: 'MaterialCommunityIcons',
+  FontAwesome: 'FontAwesome',
+  FontAwesome5: 'FontAwesome5',
+  AntDesign: 'AntDesign',
+  Entypo: 'Entypo',
+  Feather: 'Feather',
+  SimpleLineIcons: 'SimpleLineIcons',
+  Octicons: 'Octicons',
+  Zocial: 'Zocial',
+}));
+
 // Mock react-navigation
 jest.mock('@react-navigation/native', () => {
   const actualNav = jest.requireActual('@react-navigation/native');
@@ -126,33 +147,31 @@ global.console = {
   error: jest.fn(),
 };
 
-// Mock Alert
+// Mock React Native
 jest.mock('react-native', () => {
   const RN = jest.requireActual('react-native');
-  RN.Alert = {
-    alert: jest.fn(),
+  return {
+    ...RN,
+    Alert: {
+      alert: jest.fn(),
+    },
+    Platform: {
+      OS: 'ios',
+      select: jest.fn((obj) => obj.ios),
+    },
+    Dimensions: {
+      get: jest.fn(() => ({ width: 375, height: 812 })),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+    },
+    StatusBar: {
+      setBarStyle: jest.fn(),
+      setBackgroundColor: jest.fn(),
+    },
   };
-  return RN;
 });
 
-// Mock Dimensions
-jest.mock('react-native/Libraries/Utilities/Dimensions', () => ({
-  get: jest.fn(() => ({ width: 375, height: 812 })),
-  addEventListener: jest.fn(),
-  removeEventListener: jest.fn(),
-}));
-
-// Mock Platform
-jest.mock('react-native/Libraries/Utilities/Platform', () => ({
-  OS: 'ios',
-  select: jest.fn((obj) => obj.ios),
-}));
-
-// Mock StatusBar
-jest.mock('react-native/Libraries/Components/StatusBar/StatusBar', () => ({
-  setBarStyle: jest.fn(),
-  setBackgroundColor: jest.fn(),
-}));
+// These are now handled in the main React Native mock above
 
 // Mock AsyncStorage
 jest.mock('@react-native-async-storage/async-storage', () => ({

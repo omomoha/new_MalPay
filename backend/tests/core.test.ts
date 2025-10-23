@@ -11,7 +11,7 @@ describe('🧪 MalPay Core Functionality Tests', () => {
     });
 
     test('should validate Visa card numbers', () => {
-      expect(cardService.validateCardNumber('4532123456789012')).toBe(true);
+      expect(cardService.validateCardNumber('4111111111111111')).toBe(true);
       expect(cardService.validateCardNumber('4532123456789013')).toBe(false);
     });
 
@@ -123,7 +123,7 @@ describe('🧪 MalPay Core Functionality Tests', () => {
       const cardService = new CardEncryptionService();
       const cardChargingService = new CardChargingService();
       
-      const cardNumber = '4532123456789012';
+      const cardNumber = '4111111111111111';
       const cvv = '123';
       const expiryMonth = 12;
       const expiryYear = 2026;
@@ -144,7 +144,7 @@ describe('🧪 MalPay Core Functionality Tests', () => {
       
       expect(encryptedCardNumber).not.toBe(cardNumber);
       expect(encryptedCvv).not.toBe(cvv);
-      expect(maskedCardNumber).toBe('4532 **** **** 9012');
+      expect(maskedCardNumber).toBe('4111 **** **** 1111');
     });
 
     test('should process complete transfer flow', () => {
@@ -180,7 +180,7 @@ describe('🧪 MalPay Core Functionality Tests', () => {
       
       // Invalid card numbers should be rejected
       expect(cardService.validateCardNumber('1234567890123456')).toBe(false);
-      expect(cardService.validateCardNumber('453212345678901')).toBe(false); // Too short
+      expect(cardService.validateCardNumber('45321234567890')).toBe(false); // Too short (14 digits)
       
       // Invalid CVVs should be rejected
       expect(cardService.validateCvv('12', 'visa')).toBe(false);

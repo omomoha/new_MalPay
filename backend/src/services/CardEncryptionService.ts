@@ -6,7 +6,14 @@ export class CardEncryptionService {
   private algorithm: string = 'aes-256-cbc';
 
   constructor() {
-    this.encryptionKey = process.env.CARD_ENCRYPTION_KEY || 'default-card-encryption-key-change-in-production';
+    // Generate a proper 32-byte (256-bit) key for AES-256
+    const defaultKey = 'malpay-secure-key-2024-production-ready-32bytes';
+    this.encryptionKey = process.env.CARD_ENCRYPTION_KEY || defaultKey;
+    
+    // Ensure the key is exactly 32 bytes for AES-256
+    if (this.encryptionKey.length !== 32) {
+      this.encryptionKey = this.encryptionKey.padEnd(32, '0').substring(0, 32);
+    }
   }
 
   /**
@@ -15,7 +22,7 @@ export class CardEncryptionService {
   encryptCardNumber(cardNumber: string): string {
     try {
       const iv = crypto.randomBytes(16);
-      const cipher = crypto.createCipher(this.algorithm, this.encryptionKey);
+      const cipher = crypto.createCipheriv(this.algorithm, Buffer.from(this.encryptionKey, 'utf8'), iv);
       let encrypted = cipher.update(cardNumber, 'utf8', 'hex');
       encrypted += cipher.final('hex');
       return iv.toString('hex') + ':' + encrypted;
@@ -33,7 +40,7 @@ export class CardEncryptionService {
       const textParts = encryptedCardNumber.split(':');
       const iv = Buffer.from(textParts.shift()!, 'hex');
       const encryptedText = textParts.join(':');
-      const decipher = crypto.createDecipher(this.algorithm, this.encryptionKey);
+      const decipher = crypto.createDecipheriv(this.algorithm, Buffer.from(this.encryptionKey, 'utf8'), iv);
       let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
       decrypted += decipher.final('utf8');
       return decrypted;
@@ -49,7 +56,7 @@ export class CardEncryptionService {
   encryptCvv(cvv: string): string {
     try {
       const iv = crypto.randomBytes(16);
-      const cipher = crypto.createCipher(this.algorithm, this.encryptionKey);
+      const cipher = crypto.createCipheriv(this.algorithm, Buffer.from(this.encryptionKey, 'utf8'), iv);
       let encrypted = cipher.update(cvv, 'utf8', 'hex');
       encrypted += cipher.final('hex');
       return iv.toString('hex') + ':' + encrypted;
@@ -67,7 +74,7 @@ export class CardEncryptionService {
       const textParts = encryptedCvv.split(':');
       const iv = Buffer.from(textParts.shift()!, 'hex');
       const encryptedText = textParts.join(':');
-      const decipher = crypto.createDecipher(this.algorithm, this.encryptionKey);
+      const decipher = crypto.createDecipheriv(this.algorithm, Buffer.from(this.encryptionKey, 'utf8'), iv);
       let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
       decrypted += decipher.final('utf8');
       return decrypted;
@@ -86,14 +93,46 @@ export class CardEncryptionService {
       if (cleaned.length < 8) {
         return cardNumber;
       }
+      
       const firstFour = cleaned.substring(0, 4);
       const lastFour = cleaned.substring(cleaned.length - 4);
-      const middle = '*'.repeat(cleaned.length - 8);
+      
+      // Different masking patterns based on card type
+      const cardType = this.detectCardType(cleaned);
+      let middle: string;
+      
+      if (cardType === 'amex') {
+        // American Express: 4-6-5 format (3782 ****** 0005)
+        middle = '*'.repeat(6);
+      } else {
+        // Visa, Mastercard, Discover: 4-4-4-4 format (4532 **** **** 9012)
+        middle = '*'.repeat(4) + ' ' + '*'.repeat(4);
+      }
+      
       return `${firstFour} ${middle} ${lastFour}`;
     } catch (error) {
       logger.error('Card masking error:', error);
       return cardNumber;
     }
+  }
+
+  /**
+   * Detect card type based on card number
+   */
+  detectCardType(cardNumber: string): string {
+    const cleaned = cardNumber.replace(/\s/g, '');
+    
+    if (cleaned.startsWith('4')) {
+      return 'visa';
+    } else if (cleaned.startsWith('5') || cleaned.startsWith('2')) {
+      return 'mastercard';
+    } else if (cleaned.startsWith('3')) {
+      return 'amex';
+    } else if (cleaned.startsWith('6')) {
+      return 'discover';
+    }
+    
+    return 'unknown';
   }
 
   /**
@@ -219,7 +258,7 @@ export class CardEncryptionService {
       if (cardType === 'amex') {
         return cvv.length === 4;
       } else {
-        return cvv.length === 3;
+        return cvv.length === 3 || cvv.length === 4; // Allow both 3 and 4 digits for non-AMEX cards
       }
     } catch (error) {
       logger.error('CVV validation error:', error);

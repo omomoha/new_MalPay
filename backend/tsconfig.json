@@ -45,6 +45,6 @@
     "**/*.spec.ts"
   ],
   "ts-node": {
-    "esm": true
+    "esm": false
   }
 }

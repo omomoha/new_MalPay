@@ -3,6 +3,7 @@ import authReducer from './slices/authSlice';
 import cardsReducer from './slices/cardsSlice';
 import transactionsReducer from './slices/transactionsSlice';
 import bankAccountsReducer from './slices/bankAccountsSlice';
+import balanceReducer from './slices/balanceSlice';
 import uiReducer from './slices/uiSlice';
 
 export const store = configureStore({
@@ -11,6 +12,7 @@ export const store = configureStore({
     cards: cardsReducer,
     transactions: transactionsReducer,
     bankAccounts: bankAccountsReducer,
+    balance: balanceReducer,
     ui: uiReducer,
   },
   middleware: (getDefaultMiddleware) =>

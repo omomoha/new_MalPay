@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../store';
 import { checkProfileCompletion } from '../../store/slices/authSlice';
@@ -11,16 +11,28 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { isAuthenticated, isLoading, user } = useSelector((state: RootState) => state.auth);
 
+  console.log('ProtectedRoute: isAuthenticated:', isAuthenticated, 'isLoading:', isLoading, 'location:', location.pathname);
+
   useEffect(() => {
-    if (isAuthenticated && !isLoading) {
-      dispatch(checkProfileCompletion());
-    }
+    // Temporarily disabled checkProfileCompletion to prevent infinite loading loop
+    // if (isAuthenticated && !isLoading) {
+    //   dispatch(checkProfileCompletion());
+    // }
   }, [isAuthenticated, isLoading, dispatch]);
 
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      console.log('ProtectedRoute: Redirecting to login via useEffect');
+      navigate('/login', { replace: true });
+    }
+  }, [isLoading, isAuthenticated, navigate]);
+
   if (isLoading) {
+    console.log('ProtectedRoute: Showing loading state');
     return (
       <Box
         sx={{
@@ -41,7 +53,24 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    console.log('ProtectedRoute: User not authenticated, showing loading while redirecting');
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100vh',
+          gap: 2,
+        }}
+      >
+        <CircularProgress size={60} />
+        <Typography variant="h6" color="text.secondary">
+          Redirecting to login...
+        </Typography>
+      </Box>
+    );
   }
 
   // Check if user needs to complete profile

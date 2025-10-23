@@ -1,199 +1,206 @@
-// Custom Jest matchers for MalPay Mobile App
-import 'jest-extended';
+import '@testing-library/jest-native/extend-expect';
 
-// Custom matcher for Redux state
+// Custom matchers for MalPay mobile app tests
+declare global {
+  namespace jest {
+    interface Matchers<R> {
+      toBeValidCardNumber(): R;
+      toBeValidEmail(): R;
+      toBeValidPhoneNumber(): R;
+      toBeValidAmount(): R;
+      toBeValidCurrency(): R;
+      toBeValidDate(): R;
+      toBeValidPIN(): R;
+      toBeValidPassword(): R;
+      toBeValidWalletAddress(): R;
+      toBeValidTransactionId(): R;
+    }
+  }
+}
+
+// Card number validation matcher
 expect.extend({
-  toHaveReduxState(received, expectedState) {
-    const pass = this.equals(received.getState(), expectedState);
-    
+  toBeValidCardNumber(received: string) {
+    const pass = /^\d{13,19}$/.test(received.replace(/\s/g, ''));
     if (pass) {
       return {
-        message: () => `expected Redux store not to have state ${this.utils.printExpected(expectedState)}`,
+        message: () => `expected ${received} not to be a valid card number`,
         pass: true,
       };
     } else {
       return {
-        message: () => `expected Redux store to have state ${this.utils.printExpected(expectedState)}, but got ${this.utils.printReceived(received.getState())}`,
-        pass: false,
-      };
-    }
-  },
-  
-  toHaveReduxAction(received, expectedAction) {
-    const actions = received.getActions();
-    const pass = actions.some(action => 
-      action.type === expectedAction.type && 
-      this.equals(action.payload, expectedAction.payload)
-    );
-    
-    if (pass) {
-      return {
-        message: () => `expected Redux store not to have dispatched action ${this.utils.printExpected(expectedAction)}`,
-        pass: true,
-      };
-    } else {
-      return {
-        message: () => `expected Redux store to have dispatched action ${this.utils.printExpected(expectedAction)}, but got ${this.utils.printReceived(actions)}`,
-        pass: false,
-      };
-    }
-  },
-  
-  toHaveNavigationCall(received, expectedNavigation) {
-    const pass = received.mock.calls.some(call => 
-      call[0] === expectedNavigation.screen &&
-      this.equals(call[1], expectedNavigation.params)
-    );
-    
-    if (pass) {
-      return {
-        message: () => `expected navigation not to have been called with ${this.utils.printExpected(expectedNavigation)}`,
-        pass: true,
-      };
-    } else {
-      return {
-        message: () => `expected navigation to have been called with ${this.utils.printExpected(expectedNavigation)}, but got ${this.utils.printReceived(received.mock.calls)}`,
-        pass: false,
-      };
-    }
-  },
-  
-  toHaveFormValidation(received, expectedValidation) {
-    const pass = received.isValid === expectedValidation.isValid &&
-      this.equals(received.errors, expectedValidation.errors);
-    
-    if (pass) {
-      return {
-        message: () => `expected form validation not to be ${this.utils.printExpected(expectedValidation)}`,
-        pass: true,
-      };
-    } else {
-      return {
-        message: () => `expected form validation to be ${this.utils.printExpected(expectedValidation)}, but got ${this.utils.printReceived(received)}`,
-        pass: false,
-      };
-    }
-  },
-  
-  toHaveCurrencyFormat(received, expectedFormat) {
-    const currencyRegex = /^[₦$€£]\d{1,3}(,\d{3})*(\.\d{2})?$/;
-    const pass = currencyRegex.test(received) && received === expectedFormat;
-    
-    if (pass) {
-      return {
-        message: () => `expected currency not to be formatted as ${this.utils.printExpected(expectedFormat)}`,
-        pass: true,
-      };
-    } else {
-      return {
-        message: () => `expected currency to be formatted as ${this.utils.printExpected(expectedFormat)}, but got ${this.utils.printReceived(received)}`,
-        pass: false,
-      };
-    }
-  },
-  
-  toHaveTransactionStatus(received, expectedStatus) {
-    const validStatuses = ['pending', 'processing', 'completed', 'failed', 'cancelled'];
-    const pass = validStatuses.includes(received) && received === expectedStatus;
-    
-    if (pass) {
-      return {
-        message: () => `expected transaction status not to be ${this.utils.printExpected(expectedStatus)}`,
-        pass: true,
-      };
-    } else {
-      return {
-        message: () => `expected transaction status to be ${this.utils.printExpected(expectedStatus)}, but got ${this.utils.printReceived(received)}`,
-        pass: false,
-      };
-    }
-  },
-  
-  toHaveWalletBalance(received, expectedBalance) {
-    const pass = received.balance === expectedBalance.balance &&
-      received.currency === expectedBalance.currency;
-    
-    if (pass) {
-      return {
-        message: () => `expected wallet balance not to be ${this.utils.printExpected(expectedBalance)}`,
-        pass: true,
-      };
-    } else {
-      return {
-        message: () => `expected wallet balance to be ${this.utils.printExpected(expectedBalance)}, but got ${this.utils.printReceived(received)}`,
-        pass: false,
-      };
-    }
-  },
-  
-  toHaveAPIResponse(received, expectedResponse) {
-    const pass = received.success === expectedResponse.success &&
-      this.equals(received.data, expectedResponse.data);
-    
-    if (pass) {
-      return {
-        message: () => `expected API response not to be ${this.utils.printExpected(expectedResponse)}`,
-        pass: true,
-      };
-    } else {
-      return {
-        message: () => `expected API response to be ${this.utils.printExpected(expectedResponse)}, but got ${this.utils.printReceived(received)}`,
-        pass: false,
-      };
-    }
-  },
-  
-  toHaveErrorHandling(received, expectedError) {
-    const pass = received.error === expectedError ||
-      (received.error && received.error.message === expectedError);
-    
-    if (pass) {
-      return {
-        message: () => `expected error handling not to be ${this.utils.printExpected(expectedError)}`,
-        pass: true,
-      };
-    } else {
-      return {
-        message: () => `expected error handling to be ${this.utils.printExpected(expectedError)}, but got ${this.utils.printReceived(received)}`,
-        pass: false,
-      };
-    }
-  },
-  
-  toHaveSecurityValidation(received, expectedSecurity) {
-    const pass = received.isSecure === expectedSecurity.isSecure &&
-      received.hasEncryption === expectedSecurity.hasEncryption;
-    
-    if (pass) {
-      return {
-        message: () => `expected security validation not to be ${this.utils.printExpected(expectedSecurity)}`,
-        pass: true,
-      };
-    } else {
-      return {
-        message: () => `expected security validation to be ${this.utils.printExpected(expectedSecurity)}, but got ${this.utils.printReceived(received)}`,
+        message: () => `expected ${received} to be a valid card number`,
         pass: false,
       };
     }
   },
 });
 
-// Extend Jest matchers
-declare global {
-  namespace jest {
-    interface Matchers<R> {
-      toHaveReduxState(expectedState: any): R;
-      toHaveReduxAction(expectedAction: any): R;
-      toHaveNavigationCall(expectedNavigation: any): R;
-      toHaveFormValidation(expectedValidation: any): R;
-      toHaveCurrencyFormat(expectedFormat: string): R;
-      toHaveTransactionStatus(expectedStatus: string): R;
-      toHaveWalletBalance(expectedBalance: any): R;
-      toHaveAPIResponse(expectedResponse: any): R;
-      toHaveErrorHandling(expectedError: string): R;
-      toHaveSecurityValidation(expectedSecurity: any): R;
+// Email validation matcher
+expect.extend({
+  toBeValidEmail(received: string) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const pass = emailRegex.test(received);
+    if (pass) {
+      return {
+        message: () => `expected ${received} not to be a valid email`,
+        pass: true,
+      };
+    } else {
+      return {
+        message: () => `expected ${received} to be a valid email`,
+        pass: false,
+      };
     }
-  }
-}
+  },
+});
+
+// Phone number validation matcher
+expect.extend({
+  toBeValidPhoneNumber(received: string) {
+    const phoneRegex = /^(\+234|234|0)?[789][01]\d{8}$/;
+    const pass = phoneRegex.test(received.replace(/\s/g, ''));
+    if (pass) {
+      return {
+        message: () => `expected ${received} not to be a valid phone number`,
+        pass: true,
+      };
+    } else {
+      return {
+        message: () => `expected ${received} to be a valid phone number`,
+        pass: false,
+      };
+    }
+  },
+});
+
+// Amount validation matcher
+expect.extend({
+  toBeValidAmount(received: number) {
+    const pass = typeof received === 'number' && received > 0 && !isNaN(received);
+    if (pass) {
+      return {
+        message: () => `expected ${received} not to be a valid amount`,
+        pass: true,
+      };
+    } else {
+      return {
+        message: () => `expected ${received} to be a valid amount`,
+        pass: false,
+      };
+    }
+  },
+});
+
+// Currency validation matcher
+expect.extend({
+  toBeValidCurrency(received: string) {
+    const validCurrencies = ['NGN', 'USD', 'EUR', 'GBP'];
+    const pass = validCurrencies.includes(received);
+    if (pass) {
+      return {
+        message: () => `expected ${received} not to be a valid currency`,
+        pass: true,
+      };
+    } else {
+      return {
+        message: () => `expected ${received} to be a valid currency`,
+        pass: false,
+      };
+    }
+  },
+});
+
+// Date validation matcher
+expect.extend({
+  toBeValidDate(received: string | Date) {
+    const date = new Date(received);
+    const pass = date instanceof Date && !isNaN(date.getTime());
+    if (pass) {
+      return {
+        message: () => `expected ${received} not to be a valid date`,
+        pass: true,
+      };
+    } else {
+      return {
+        message: () => `expected ${received} to be a valid date`,
+        pass: false,
+      };
+    }
+  },
+});
+
+// PIN validation matcher
+expect.extend({
+  toBeValidPIN(received: string) {
+    const pass = /^\d{4,6}$/.test(received);
+    if (pass) {
+      return {
+        message: () => `expected ${received} not to be a valid PIN`,
+        pass: true,
+      };
+    } else {
+      return {
+        message: () => `expected ${received} to be a valid PIN`,
+        pass: false,
+      };
+    }
+  },
+});
+
+// Password validation matcher
+expect.extend({
+  toBeValidPassword(received: string) {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const pass = passwordRegex.test(received);
+    if (pass) {
+      return {
+        message: () => `expected ${received} not to be a valid password`,
+        pass: true,
+      };
+    } else {
+      return {
+        message: () => `expected ${received} to be a valid password`,
+        pass: false,
+      };
+    }
+  },
+});
+
+// Wallet address validation matcher
+expect.extend({
+  toBeValidWalletAddress(received: string) {
+    const pass = /^[A-Za-z0-9]{26,42}$/.test(received);
+    if (pass) {
+      return {
+        message: () => `expected ${received} not to be a valid wallet address`,
+        pass: true,
+      };
+    } else {
+      return {
+        message: () => `expected ${received} to be a valid wallet address`,
+        pass: false,
+      };
+    }
+  },
+});
+
+// Transaction ID validation matcher
+expect.extend({
+  toBeValidTransactionId(received: string) {
+    const pass = /^[A-Za-z0-9]{8,32}$/.test(received);
+    if (pass) {
+      return {
+        message: () => `expected ${received} not to be a valid transaction ID`,
+        pass: true,
+      };
+    } else {
+      return {
+        message: () => `expected ${received} to be a valid transaction ID`,
+        pass: false,
+      };
+    }
+  },
+});
 
 export {};

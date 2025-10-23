@@ -26,6 +26,8 @@ import {
   SettingsPage,
   QRCodePage,
   NotFoundPage,
+  BalancePage,
+  TransactionDetailPage,
 } from './pages';
 import DashboardPage from './pages/Dashboard/DashboardPage';
 
@@ -69,6 +71,12 @@ const AppContent: React.FC = () => {
             {/* Bank Accounts */}
             <Route path="bank-accounts" element={<BankAccountsPage />} />
             <Route path="bank-accounts/add" element={<AddBankAccountPage />} />
+            
+            {/* Balance */}
+            <Route path="balance" element={<BalancePage />} />
+            
+            {/* Transaction Detail */}
+            <Route path="transaction/:id" element={<TransactionDetailPage />} />
             
             {/* Withdrawals */}
             <Route path="withdraw" element={<WithdrawPage />} />

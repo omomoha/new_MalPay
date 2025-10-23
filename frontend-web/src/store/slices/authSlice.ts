@@ -41,15 +41,27 @@ export const initializeAuth = createAsyncThunk(
   'auth/initialize',
   async (_, { rejectWithValue }) => {
     try {
+      console.log('initializeAuth: Checking for access token...');
       const accessToken = localStorage.getItem('accessToken');
-      if (!accessToken) {
+      console.log('initializeAuth: Access token found:', !!accessToken);
+      
+      if (!accessToken || accessToken === 'null' || accessToken === 'undefined') {
+        console.log('initializeAuth: No valid access token, user not authenticated');
+        return { isAuthenticated: false };
+      }
+      
+      // Check if token is a valid format (not just "mock-access-token")
+      if (accessToken === 'mock-access-token') {
+        console.log('initializeAuth: Mock token found, treating as not authenticated');
         return { isAuthenticated: false };
       }
       
       // In a real app, you would validate the token with the server
-      // For now, we'll just check if it exists
+      // For now, we'll just check if it exists and is valid
+      console.log('initializeAuth: Valid access token exists, user authenticated');
       return { isAuthenticated: true };
     } catch (error: any) {
+      console.error('initializeAuth: Error during initialization:', error);
       return rejectWithValue('Failed to initialize auth');
     }
   }
@@ -143,13 +155,22 @@ const authSlice = createSlice({
     builder
       // Initialize Auth
       .addCase(initializeAuth.pending, (state) => {
+        console.log('initializeAuth.pending: Setting isLoading to true');
         state.isLoading = true;
       })
       .addCase(initializeAuth.fulfilled, (state, action) => {
+        console.log('initializeAuth.fulfilled: Setting isLoading to false, isAuthenticated to:', action.payload.isAuthenticated);
         state.isLoading = false;
         state.isAuthenticated = action.payload.isAuthenticated;
+        if (!action.payload.isAuthenticated) {
+          state.tokens = { accessToken: null, refreshToken: null };
+          // Clear any existing tokens from localStorage
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+        }
       })
       .addCase(initializeAuth.rejected, (state) => {
+        console.log('initializeAuth.rejected: Setting isLoading to false, isAuthenticated to false');
         state.isLoading = false;
         state.isAuthenticated = false;
         state.tokens = { accessToken: null, refreshToken: null };

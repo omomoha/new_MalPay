@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
 // Create axios instance
 const api: AxiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3000/api/v1',
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3001/api/v1',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -180,6 +180,25 @@ export const blockchainAPI = {
   
   calculateFees: (network: string, amount: number) =>
     api.get(`/blockchain/fees/${network}?amount=${amount}`),
+};
+
+// Balance API (Mastercard balance checking)
+export const balanceAPI = {
+  getAllCardBalances: () => api.get('/balance/cards'),
+  
+  getCardBalance: (cardId: string) => api.get(`/balance/cards/${cardId}`),
+  
+  refreshCardBalance: (cardId: string, cardData: {
+    cardNumber: string;
+    expiryMonth: string;
+    expiryYear: string;
+    cvv: string;
+    cardholderName: string;
+  }) => api.post(`/balance/cards/${cardId}/refresh`, cardData),
+  
+  getMastercardStatus: () => api.get('/balance/mastercard-status'),
+  
+  deactivateCardBalance: (cardId: string) => api.delete(`/balance/cards/${cardId}`),
 };
 
 // Admin API

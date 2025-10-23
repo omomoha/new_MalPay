@@ -253,6 +253,91 @@ export const api = createApi({
       invalidatesTags: ['Notification'],
     }),
     
+    // Balance endpoints (Mastercard balance checking)
+    getAllCardBalances: builder.query<{
+      balances: Array<{
+        cardId: string;
+        cardType: string;
+        maskedCardNumber: string;
+        balance: number;
+        currency: string;
+        lastUpdated: string;
+        isMastercard: boolean;
+      }>;
+      totalBalance: number;
+      currency: string;
+      notification?: {
+        message: string;
+        type: 'info' | 'warning' | 'error' | 'success';
+        showAlways: boolean;
+      };
+    }, void>({
+      query: () => '/balance/cards',
+      providesTags: ['Card', 'Balance'],
+    }),
+    
+    getCardBalance: builder.query<{
+      balance: {
+        cardId: string;
+        cardType: string;
+        maskedCardNumber: string;
+        balance: number;
+        currency: string;
+        lastUpdated: string;
+        isMastercard: boolean;
+      };
+    }, string>({
+      query: (cardId) => `/balance/cards/${cardId}`,
+      providesTags: (result, error, cardId) => [{ type: 'Balance', id: cardId }],
+    }),
+    
+    refreshCardBalance: builder.mutation<{
+      balance: {
+        cardId: string;
+        cardType: string;
+        maskedCardNumber: string;
+        balance: number;
+        currency: string;
+        lastUpdated: string;
+        isMastercard: boolean;
+      };
+      message: string;
+    }, {
+      cardId: string;
+      cardData: {
+        cardNumber: string;
+        expiryMonth: string;
+        expiryYear: string;
+        cvv: string;
+        cardholderName: string;
+      };
+    }>({
+      query: ({ cardId, cardData }) => ({
+        url: `/balance/cards/${cardId}/refresh`,
+        method: 'POST',
+        body: cardData,
+      }),
+      invalidatesTags: ['Balance', 'Card'],
+    }),
+    
+    getMastercardStatus: builder.query<{
+      hasMastercardBalances: boolean;
+      message: string;
+    }, void>({
+      query: () => '/balance/mastercard-status',
+      providesTags: ['Balance'],
+    }),
+    
+    deactivateCardBalance: builder.mutation<{
+      message: string;
+    }, string>({
+      query: (cardId) => ({
+        url: `/balance/cards/${cardId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Balance', 'Card'],
+    }),
+
     // Admin endpoints (for admin users)
     getAdminStats: builder.query<AdminStats, void>({
       query: () => '/admin/stats',
@@ -311,6 +396,13 @@ export const {
   useGetNotificationsQuery,
   useMarkNotificationReadMutation,
   
+  // Balance hooks
+  useGetAllCardBalancesQuery,
+  useGetCardBalanceQuery,
+  useRefreshCardBalanceMutation,
+  useGetMastercardStatusQuery,
+  useDeactivateCardBalanceMutation,
+
   // Admin hooks
   useGetAdminStatsQuery,
   useGetAdminTransactionsQuery,

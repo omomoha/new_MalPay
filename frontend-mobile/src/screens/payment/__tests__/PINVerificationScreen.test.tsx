@@ -3,7 +3,7 @@ import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import PINVerificationScreen from '../PINVerificationScreen';
 
 // Mock CardEncryption
-jest.mock('../../utils/cardEncryption', () => ({
+jest.mock('@utils/cardEncryption', () => ({
   verifyPIN: jest.fn(() => Promise.resolve(true)),
 }));
 

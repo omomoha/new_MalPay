@@ -3,7 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { InputSanitizationService } from './middleware/inputSanitization';
-import { SecurityMonitoringService } from './services/SecurityMonitoringService';
+// import { SecurityMonitoringService } from './services/SecurityMonitoringService'; // Disabled for development
 
 const app = express();
 
@@ -13,7 +13,7 @@ const authenticateToken = (req: any, res: any, next: any) => {
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
-    SecurityMonitoringService.logUnauthorizedAccess(req);
+    // SecurityMonitoringService.logUnauthorizedAccess(req); // Disabled for development
     return res.status(401).json({
       success: false,
       error: { message: 'Access token required' }
@@ -23,6 +23,7 @@ const authenticateToken = (req: any, res: any, next: any) => {
   // In a real implementation, verify JWT token here
   // For now, accept any token for testing
   req.user = { id: 'user-123', email: 'user@example.com' };
+  // SecurityMonitoringService.logUnauthorizedAccess(req); // Disabled for development
   next();
 };
 const PORT = process.env.PORT || 3000;
@@ -30,36 +31,38 @@ const PORT = process.env.PORT || 3000;
 // Security middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: process.env.FRONTEND_URL || 'http://localhost:3001',
   credentials: true,
 }));
 
 // Input sanitization middleware
 app.use(InputSanitizationService.sanitizeRequestBody);
 
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.',
-});
-app.use(limiter);
+// Rate limiting - DISABLED for development
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   max: 10000, // limit each IP to 10000 requests per windowMs (very generous for development)
+//   message: 'Too many requests from this IP, please try again later.',
+//   standardHeaders: true,
+//   legacyHeaders: false,
+// });
+// app.use(limiter);
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Security monitoring endpoint (admin only)
-app.get('/api/v1/admin/security-events', authenticateToken, (req, res) => {
-  const stats = SecurityMonitoringService.getSecurityStats();
-  const recentEvents = SecurityMonitoringService.getSecurityEvents(50);
-  
-  res.json({
-    success: true,
-    stats,
-    recentEvents
-  });
-});
+// Security monitoring endpoint (admin only) - Disabled for development
+// app.get('/api/v1/admin/security-events', authenticateToken, (req, res) => {
+//   const stats = SecurityMonitoringService.getSecurityStats();
+//   const recentEvents = SecurityMonitoringService.getSecurityEvents(50);
+//   
+//   res.json({
+//     success: true,
+//     stats,
+//     recentEvents
+//   });
+// });
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -74,12 +77,44 @@ app.get('/health', (req, res) => {
 // Mock authentication endpoints
 app.post('/api/v1/auth/register', (req, res) => {
   const { name, email, phoneNumber, password, confirmPassword } = req.body;
+  
+  // Validation
+  if (!name || !email || !phoneNumber || !password || !confirmPassword) {
+    return res.status(400).json({ 
+      success: false, 
+      error: { message: 'All fields are required' } 
+    });
+  }
+  
+  if (password !== confirmPassword) {
+    return res.status(400).json({ 
+      success: false, 
+      error: { message: 'Passwords do not match' } 
+    });
+  }
+  
+  if (password.length < 8) {
+    return res.status(400).json({ 
+      success: false, 
+      error: { message: 'Password must be at least 8 characters long' } 
+    });
+  }
+  
+  // Check if email already exists (mock check)
+  const existingEmails = ['admin@malpay.com', 'user@malpay.com', 'demo@malpay.com'];
+  if (existingEmails.includes(email.toLowerCase())) {
+    return res.status(400).json({ 
+      success: false, 
+      error: { message: 'Email already exists' } 
+    });
+  }
+  
   res.status(201).json({
     success: true,
     message: 'User registered successfully. Please check your email to verify your account.',
     user: {
-      id: 'mock-user-id',
-      email,
+      id: 'mock-user-id-' + Date.now(),
+      email: email.toLowerCase(),
       name,
       phoneNumber,
       isEmailVerified: false,
@@ -115,18 +150,14 @@ app.post('/api/v1/auth/resend-verification', (req, res) => {
 app.post('/api/v1/auth/login', (req, res) => {
   const { email, password } = req.body;
   
-  // Use environment variables for admin credentials
-  const adminEmail = process.env.ADMIN_EMAIL || 'admin@malpay.com';
-  const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
-  
-  if (email === adminEmail && password === adminPassword) {
-    res.json({
-      success: true,
-      message: 'Login successful',
+  // Test accounts for local development
+  const testAccounts = {
+    'admin@malpay.com': {
+      password: 'Admin123!',
       user: {
         id: '00000000-0000-0000-0000-000000000001',
         email: 'admin@malpay.com',
-        name: 'Admin User',
+        name: 'MalPay Admin',
         phoneNumber: '+2348000000000',
         isEmailVerified: true,
         isPhoneVerified: true,
@@ -140,20 +171,14 @@ app.post('/api/v1/auth/login', (req, res) => {
         cardCount: 2,
         maxCards: 3,
         missingSteps: [],
-      },
-      tokens: {
-        accessToken: 'mock-access-token',
-        refreshToken: 'mock-refresh-token',
-      },
-    });
-  } else {
-    res.json({
-      success: true,
-      message: 'Login successful',
+      }
+    },
+    'user@malpay.com': {
+      password: 'User123!',
       user: {
-        id: 'mock-user-id',
-        email: 'user@example.com',
-        name: 'John Doe',
+        id: '00000000-0000-0000-0000-000000000002',
+        email: 'user@malpay.com',
+        name: 'Test User',
         phoneNumber: '+2348012345678',
         isEmailVerified: true,
         isPhoneVerified: true,
@@ -167,16 +192,54 @@ app.post('/api/v1/auth/login', (req, res) => {
         cardCount: 0,
         maxCards: 3,
         missingSteps: ['Link a bank account', 'Add at least one card'],
+      }
+    },
+    'demo@malpay.com': {
+      password: 'Demo123!',
+      user: {
+        id: '00000000-0000-0000-0000-000000000003',
+        email: 'demo@malpay.com',
+        name: 'Demo User',
+        phoneNumber: '+2348098765432',
+        isEmailVerified: true,
+        isPhoneVerified: true,
+        is2FAEnabled: false,
+        createdAt: new Date().toISOString(),
       },
+      profileStatus: {
+        isComplete: true,
+        hasBankAccount: true,
+        hasCards: true,
+        cardCount: 1,
+        maxCards: 3,
+        missingSteps: [],
+      }
+    }
+  };
+  
+  const account = testAccounts[email];
+  
+  if (account && account.password === password) {
+    res.json({
+      success: true,
+      message: 'Login successful',
+      user: account.user,
+      profileStatus: account.profileStatus,
       tokens: {
         accessToken: 'mock-access-token',
         refreshToken: 'mock-refresh-token',
       },
     });
+  } else {
+    res.status(401).json({
+      success: false,
+      error: { message: 'Invalid email or password' }
+    });
   }
 });
 
-app.get('/api/v1/auth/profile-completion', authenticateToken, (req, res) => {
+// Mock endpoints for development (no auth required)
+app.get('/api/v1/auth/profile-completion', (req, res) => {
   res.json({
     success: true,
     profileStatus: {
@@ -190,36 +253,119 @@ app.get('/api/v1/auth/profile-completion', authenticateToken, (req, res) => {
   });
 });
 
-// Mock card endpoints
-app.get('/api/v1/cards', authenticateToken, (req, res) => {
+app.get('/api/v1/bank-accounts', (req, res) => {
   res.json({
     success: true,
-    cards: [
-      {
-        id: '1',
-        cardNumberMasked: '4532 **** **** 1234',
-        cardType: 'visa',
-        expiryMonth: 12,
-        expiryYear: 2026,
-        cardholderName: 'John Doe',
-        isDefault: true,
-        createdAt: new Date().toISOString(),
-      },
-      {
-        id: '2',
-        cardNumberMasked: '5555 **** **** 5678',
-        cardType: 'mastercard',
-        expiryMonth: 10,
-        expiryYear: 2027,
-        cardholderName: 'John Doe',
-        isDefault: false,
-        createdAt: new Date().toISOString(),
-      },
-    ],
-    count: 2,
-    maxCards: 3,
+    bankAccounts: [],
   });
 });
+
+app.get('/api/v1/cards', (req, res) => {
+  res.json({
+    success: true,
+    cards: [],
+  });
+});
+
+app.get('/api/v1/payments/transactions', (req, res) => {
+  res.json({
+    success: true,
+    transactions: [],
+    pagination: {
+      page: 1,
+      limit: 5,
+      total: 0,
+      totalPages: 0,
+    },
+  });
+});
+
+// Additional mock endpoints for development
+app.get('/api/v1/withdrawals', (req, res) => {
+  res.json({
+    success: true,
+    withdrawals: [],
+    pagination: {
+      page: 1,
+      limit: 10,
+      total: 0,
+      totalPages: 0,
+    },
+  });
+});
+
+app.get('/api/v1/blockchain/balance/:network/:address', (req, res) => {
+  res.json({
+    success: true,
+    balance: '0.00',
+    currency: 'USDT',
+    network: req.params.network,
+  });
+});
+
+app.get('/api/v1/blockchain/transactions/:network/:address', (req, res) => {
+  res.json({
+    success: true,
+    transactions: [],
+    network: req.params.network,
+  });
+});
+
+app.get('/api/v1/blockchain/recommended-network', (req, res) => {
+  res.json({
+    success: true,
+    network: 'tron',
+    reason: 'Lowest fees for this amount',
+  });
+});
+
+app.get('/api/v1/blockchain/fees/:network', (req, res) => {
+  res.json({
+    success: true,
+    network: req.params.network,
+    fee: '1.00',
+    currency: 'USDT',
+  });
+});
+
+app.get('/api/v1/admin/security-events', (req, res) => {
+  res.json({
+    success: true,
+    events: [],
+    stats: {
+      totalEvents: 0,
+      criticalEvents: 0,
+      warningEvents: 0,
+    },
+  });
+});
+
+app.get('/api/v1/admin/system-stats', (req, res) => {
+  res.json({
+    success: true,
+    stats: {
+      totalUsers: 0,
+      totalTransactions: 0,
+      totalVolume: 0,
+      activeUsers: 0,
+    },
+  });
+});
+
+app.get('/api/v1/admin/users', (req, res) => {
+  res.json({
+    success: true,
+    users: [],
+    pagination: {
+      page: 1,
+      limit: 10,
+      total: 0,
+      totalPages: 0,
+    },
+  });
+});
+
+// Mock card endpoints (removed duplicate)
 
 app.post('/api/v1/cards', authenticateToken, (req, res) => {
   const { cardNumber, expiryMonth, expiryYear, cvv, cardholderName } = req.body;

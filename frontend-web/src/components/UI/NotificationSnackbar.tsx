@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Snackbar, Alert, AlertTitle } from '@mui/material';
+import { Snackbar, Alert } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../store';
 import { removeNotification } from '../../store/slices/uiSlice';

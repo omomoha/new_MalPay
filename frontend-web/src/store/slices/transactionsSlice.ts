@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { transactionsAPI } from '../services/api';
+import { transactionsAPI } from '../../services/api';
 
 export interface Transaction {
   id: string;
@@ -61,12 +61,12 @@ const initialState: TransactionsState = {
 // Async thunks
 export const fetchTransactions = createAsyncThunk(
   'transactions/fetchTransactions',
-  async (params?: {
+  async (params: {
     page?: number;
     limit?: number;
     type?: string;
     status?: string;
-  }, { rejectWithValue }) => {
+  } = {}, { rejectWithValue }) => {
     try {
       const response = await transactionsAPI.getTransactions(params);
       return response.data;

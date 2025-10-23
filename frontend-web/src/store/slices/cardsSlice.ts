@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { cardsAPI } from '../services/api';
+import { cardsAPI } from '../../services/api';
 
 export interface Card {
   id: string;
@@ -79,7 +79,7 @@ export const deleteCard = createAsyncThunk(
   'cards/deleteCard',
   async (cardId: string, { rejectWithValue }) => {
     try {
-      const response = await cardsAPI.deleteCard(cardId);
+      await cardsAPI.deleteCard(cardId);
       return { cardId };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.error?.message || 'Failed to delete card');

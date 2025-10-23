@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { bankAccountsAPI } from '../services/api';
+import { bankAccountsAPI } from '../../services/api';
 
 export interface BankAccount {
   id: string;
@@ -62,7 +62,7 @@ export const deleteBankAccount = createAsyncThunk(
   'bankAccounts/deleteBankAccount',
   async (accountId: string, { rejectWithValue }) => {
     try {
-      const response = await bankAccountsAPI.deleteBankAccount(accountId);
+      await bankAccountsAPI.deleteBankAccount(accountId);
       return { accountId };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.error?.message || 'Failed to delete bank account');

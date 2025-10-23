@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   Box,
-  Grid,
   Card,
   CardContent,
   Typography,
@@ -14,7 +13,6 @@ import {
   ListItemAvatar,
   ListItemSecondaryAction,
   IconButton,
-  Paper,
   Divider,
 } from '@mui/material';
 import {
@@ -33,18 +31,17 @@ import { RootState, AppDispatch } from '../../store';
 import { fetchCards } from '../../store/slices/cardsSlice';
 import { fetchTransactions } from '../../store/slices/transactionsSlice';
 import { fetchBankAccounts } from '../../store/slices/bankAccountsSlice';
-import { openModal } from '../../store/slices/uiSlice';
 import { useNavigate } from 'react-router-dom';
 
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.auth);
-  const { cards } = useSelector((state: RootState) => state.cards);
-  const { transactions } = useSelector((state: RootState) => state.transactions);
-  const { bankAccounts } = useSelector((state: RootState) => state.bankAccounts);
+  const { cards } = useSelector((state: RootState) => state.cards as any);
+  const { transactions } = useSelector((state: RootState) => state.transactions as any);
+  const { bankAccounts } = useSelector((state: RootState) => state.bankAccounts as any);
 
-  const [balance, setBalance] = useState(0);
+  const [balance] = useState(0);
 
   useEffect(() => {
     dispatch(fetchCards());
@@ -142,37 +139,36 @@ const DashboardPage: React.FC = () => {
         <Typography variant="h5" component="h2" gutterBottom>
           Quick Actions
         </Typography>
-        <Grid container spacing={2}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(4, 1fr)' }, gap: 2 }}>
           {quickActions.map((action, index) => (
-            <Grid item xs={6} sm={3} key={index}>
-              <Card
-                sx={{
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease-in-out',
-                  '&:hover': {
-                    transform: 'translateY(-2px)',
-                    boxShadow: 4,
-                  },
-                }}
-                onClick={action.onClick}
-              >
-                <CardContent sx={{ textAlign: 'center', py: 3 }}>
-                  <Avatar sx={{ bgcolor: `${action.color}.main`, mx: 'auto', mb: 2 }}>
-                    {action.icon}
-                  </Avatar>
-                  <Typography variant="body1" fontWeight="medium">
-                    {action.title}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
+            <Card
+              key={index}
+              sx={{
+                cursor: 'pointer',
+                transition: 'all 0.2s ease-in-out',
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: 4,
+                },
+              }}
+              onClick={action.onClick}
+            >
+              <CardContent sx={{ textAlign: 'center', py: 3 }}>
+                <Avatar sx={{ bgcolor: `${action.color}.main`, mx: 'auto', mb: 2 }}>
+                  {action.icon}
+                </Avatar>
+                <Typography variant="body1" fontWeight="medium">
+                  {action.title}
+                </Typography>
+              </CardContent>
+            </Card>
           ))}
-        </Grid>
+        </Box>
       </Box>
 
-      <Grid container spacing={3}>
-        {/* Cards Overview */}
-        <Grid item xs={12} md={6}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
+          {/* Cards Overview */}
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -196,7 +192,7 @@ const DashboardPage: React.FC = () => {
                     />
                   </ListItem>
                 ) : (
-                  cards.map((card) => (
+                  cards.map((card: any) => (
                     <ListItem key={card.id}>
                       <ListItemAvatar>
                         <Avatar sx={{ bgcolor: 'primary.main' }}>
@@ -218,10 +214,8 @@ const DashboardPage: React.FC = () => {
               </List>
             </CardContent>
           </Card>
-        </Grid>
 
-        {/* Bank Accounts Overview */}
-        <Grid item xs={12} md={6}>
+          {/* Bank Accounts Overview */}
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -245,7 +239,7 @@ const DashboardPage: React.FC = () => {
                     />
                   </ListItem>
                 ) : (
-                  bankAccounts.map((account) => (
+                  bankAccounts.map((account: any) => (
                     <ListItem key={account.id}>
                       <ListItemAvatar>
                         <Avatar sx={{ bgcolor: 'success.main' }}>
@@ -267,83 +261,81 @@ const DashboardPage: React.FC = () => {
               </List>
             </CardContent>
           </Card>
-        </Grid>
+        </Box>
 
         {/* Recent Transactions */}
-        <Grid item xs={12}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h6" component="h3">
-                  Recent Transactions
-                </Typography>
-                <Button
-                  size="small"
-                  onClick={() => navigate('/transactions')}
-                >
-                  View All
-                </Button>
-              </Box>
-              <List>
-                {recentTransactions.length === 0 ? (
-                  <ListItem>
-                    <ListItemText
-                      primary="No transactions yet"
-                      secondary="Your transaction history will appear here"
-                    />
-                  </ListItem>
-                ) : (
-                  recentTransactions.map((transaction) => (
-                    <React.Fragment key={transaction.id}>
-                      <ListItem>
-                        <ListItemAvatar>
-                          <Avatar sx={{ bgcolor: `${getTransactionColor(transaction.type)}.main` }}>
-                            {getTransactionIcon(transaction.type)}
-                          </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText
-                          primary={
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <Typography variant="body1" fontWeight="medium">
-                                {transaction.description || `${transaction.type} transaction`}
-                              </Typography>
-                              <Typography
-                                variant="body1"
-                                fontWeight="bold"
-                                color={transaction.type === 'withdrawal' ? 'error.main' : 'success.main'}
-                              >
-                                {transaction.type === 'withdrawal' ? '-' : '+'}₦{transaction.amount.toLocaleString()}
-                              </Typography>
-                            </Box>
-                          }
-                          secondary={
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <Typography variant="body2" color="text.secondary">
-                                {new Date(transaction.createdAt).toLocaleDateString()}
-                              </Typography>
-                              <Chip
-                                label={transaction.status}
-                                size="small"
-                                color={transaction.status === 'completed' ? 'success' : 'default'}
-                              />
-                            </Box>
-                          }
-                        />
-                        <ListItemSecondaryAction>
-                          <IconButton edge="end">
-                            <MoreVert />
-                          </IconButton>
-                        </ListItemSecondaryAction>
-                      </ListItem>
-                      <Divider />
-                    </React.Fragment>
-                  ))
-                )}
-              </List>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+        <Card>
+          <CardContent>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h6" component="h3">
+                Recent Transactions
+              </Typography>
+              <Button
+                size="small"
+                onClick={() => navigate('/transactions')}
+              >
+                View All
+              </Button>
+            </Box>
+            <List>
+              {recentTransactions.length === 0 ? (
+                <ListItem>
+                  <ListItemText
+                    primary="No transactions yet"
+                    secondary="Your transaction history will appear here"
+                  />
+                </ListItem>
+              ) : (
+                recentTransactions.map((transaction: any) => (
+                  <React.Fragment key={transaction.id}>
+                    <ListItem>
+                      <ListItemAvatar>
+                        <Avatar sx={{ bgcolor: `${getTransactionColor(transaction.type)}.main` }}>
+                          {getTransactionIcon(transaction.type)}
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography variant="body1" fontWeight="medium">
+                              {transaction.description || `${transaction.type} transaction`}
+                            </Typography>
+                            <Typography
+                              variant="body1"
+                              fontWeight="bold"
+                              color={transaction.type === 'withdrawal' ? 'error.main' : 'success.main'}
+                            >
+                              {transaction.type === 'withdrawal' ? '-' : '+'}₦{transaction.amount.toLocaleString()}
+                            </Typography>
+                          </Box>
+                        }
+                        secondary={
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography variant="body2" color="text.secondary">
+                              {new Date(transaction.createdAt).toLocaleDateString()}
+                            </Typography>
+                            <Chip
+                              label={transaction.status}
+                              size="small"
+                              color={transaction.status === 'completed' ? 'success' : 'default'}
+                            />
+                          </Box>
+                        }
+                      />
+                      <ListItemSecondaryAction>
+                        <IconButton edge="end">
+                          <MoreVert />
+                        </IconButton>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                    <Divider />
+                  </React.Fragment>
+                ))
+              )}
+            </List>
+          </CardContent>
+        </Card>
+      </Box>
     </Box>
   );
 };

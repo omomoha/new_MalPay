@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { authAPI } from '../services/api';
+import { authAPI } from '../../services/api';
 
 export interface User {
   id: string;
@@ -28,15 +28,33 @@ export interface AuthState {
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
-  isLoading: false,
+  isLoading: true, // Start with loading true to check for stored tokens
   error: null,
   tokens: {
-    accessToken: null,
-    refreshToken: null,
+    accessToken: localStorage.getItem('accessToken'),
+    refreshToken: localStorage.getItem('refreshToken'),
   },
 };
 
 // Async thunks
+export const initializeAuth = createAsyncThunk(
+  'auth/initialize',
+  async (_, { rejectWithValue }) => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      if (!accessToken) {
+        return { isAuthenticated: false };
+      }
+      
+      // In a real app, you would validate the token with the server
+      // For now, we'll just check if it exists
+      return { isAuthenticated: true };
+    } catch (error: any) {
+      return rejectWithValue('Failed to initialize auth');
+    }
+  }
+);
+
 export const login = createAsyncThunk(
   'auth/login',
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
@@ -123,6 +141,21 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Initialize Auth
+      .addCase(initializeAuth.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(initializeAuth.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isAuthenticated = action.payload.isAuthenticated;
+      })
+      .addCase(initializeAuth.rejected, (state) => {
+        state.isLoading = false;
+        state.isAuthenticated = false;
+        state.tokens = { accessToken: null, refreshToken: null };
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+      })
       // Login
       .addCase(login.pending, (state) => {
         state.isLoading = true;

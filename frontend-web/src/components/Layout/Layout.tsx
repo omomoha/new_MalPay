@@ -19,8 +19,6 @@ import {
   Avatar,
   Menu,
   MenuItem,
-  Switch,
-  FormControlLabel,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -38,10 +36,10 @@ import {
   Brightness7 as Brightness7Icon,
 } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from '../store';
-import { logout, clearAuth } from '../store/slices/authSlice';
-import { toggleTheme, toggleSidebar, setSidebarOpen } from '../store/slices/uiSlice';
-import NotificationSnackbar from '../components/UI/NotificationSnackbar';
+import { RootState, AppDispatch } from '../../store';
+import { logout, clearAuth } from '../../store/slices/authSlice';
+import { toggleTheme, toggleSidebar, setSidebarOpen } from '../../store/slices/uiSlice';
+import NotificationSnackbar from '../UI/NotificationSnackbar';
 
 const drawerWidth = 280;
 
@@ -61,7 +59,7 @@ const Layout: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   
-  const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { user } = useSelector((state: RootState) => state.auth);
   const { sidebarOpen, theme: currentTheme, notifications } = useSelector((state: RootState) => state.ui);
   
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -290,7 +288,7 @@ const Layout: React.FC = () => {
         {notifications.length === 0 ? (
           <MenuItem disabled>No notifications</MenuItem>
         ) : (
-          notifications.map((notification) => (
+          notifications.map((notification: any) => (
             <MenuItem key={notification.id} onClick={handleNotificationMenuClose}>
               <ListItemText
                 primary={notification.message}

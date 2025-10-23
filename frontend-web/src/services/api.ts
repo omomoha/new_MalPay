@@ -139,6 +139,19 @@ export const paymentsAPI = {
     api.get(`/payments/transactions/${transactionId}`),
 };
 
+// Transactions API (alias for payments API)
+export const transactionsAPI = {
+  getTransactions: (params?: {
+    page?: number;
+    limit?: number;
+    type?: string;
+    status?: string;
+  }) => api.get('/payments/transactions', { params }),
+  
+  getTransactionById: (transactionId: string) =>
+    api.get(`/payments/transactions/${transactionId}`),
+};
+
 // Withdrawals API
 export const withdrawalsAPI = {
   createWithdrawal: (withdrawalData: {

@@ -15,15 +15,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
-const SendMoneyScreen: React.FC = () => {
+const WithdrawScreen: React.FC = () => {
   const navigation = useNavigation();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    recipient: '',
     amount: '',
+    bankAccount: '',
+    withdrawalMethod: 'bank',
     description: '',
-    paymentMethod: 'card',
-    selectedCard: '',
   });
   const [loading, setLoading] = useState(false);
 
@@ -35,7 +34,7 @@ const SendMoneyScreen: React.FC = () => {
   };
 
   const handleNext = () => {
-    if (step === 1 && formData.recipient && formData.amount) {
+    if (step === 1 && formData.amount && formData.bankAccount) {
       setStep(2);
     } else if (step === 2) {
       setStep(3);
@@ -50,7 +49,7 @@ const SendMoneyScreen: React.FC = () => {
     }
   };
 
-  const handleSend = async () => {
+  const handleWithdraw = async () => {
     setLoading(true);
     try {
       // Simulate API call
@@ -58,7 +57,7 @@ const SendMoneyScreen: React.FC = () => {
       
       Alert.alert(
         'Success',
-        `Successfully sent $${formData.amount} to ${formData.recipient}`,
+        `Successfully withdrew $${formData.amount} to your bank account`,
         [
           {
             text: 'OK',
@@ -67,32 +66,27 @@ const SendMoneyScreen: React.FC = () => {
         ]
       );
     } catch (error) {
-      Alert.alert('Error', 'Failed to send money. Please try again.');
+      Alert.alert('Error', 'Failed to withdraw funds. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  const recentContacts = [
-    { name: 'John Doe', type: 'email', value: 'john@example.com', avatar: 'JD' },
-    { name: 'Jane Smith', type: 'phone', value: '+1234567890', avatar: 'JS' },
-    { name: 'Mike Johnson', type: 'email', value: 'mike@example.com', avatar: 'MJ' },
+  const bankAccounts = [
+    { id: '1', bankName: 'Access Bank', accountNumber: '1234567890', isPrimary: true },
+    { id: '2', bankName: 'GTBank', accountNumber: '0987654321', isPrimary: false },
+  ];
+
+  const withdrawalMethods = [
+    { id: 'bank', name: 'Bank Transfer', icon: 'business-outline', fee: 0, time: '1-3 business days' },
+    { id: 'card', name: 'Card Withdrawal', icon: 'card-outline', fee: 2.50, time: 'Instant' },
+    { id: 'crypto', name: 'Crypto Transfer', icon: 'trending-up-outline', fee: 1.00, time: '5-10 minutes' },
   ];
 
   const renderStep1 = () => (
     <View style={styles.stepContainer}>
-      <Text style={styles.stepTitle}>Who are you sending to?</Text>
+      <Text style={styles.stepTitle}>How much do you want to withdraw?</Text>
       
-      <View style={styles.inputContainer}>
-        <Ionicons name="person-outline" size={20} color="#666" style={styles.inputIcon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Enter email, phone, or name"
-          value={formData.recipient}
-          onChangeText={(value) => handleInputChange('recipient', value)}
-        />
-      </View>
-
       <View style={styles.inputContainer}>
         <Text style={styles.currencySymbol}>$</Text>
         <TextInput
@@ -104,10 +98,41 @@ const SendMoneyScreen: React.FC = () => {
         />
       </View>
 
+      <Text style={styles.sectionTitle}>Select Bank Account</Text>
+      
+      {bankAccounts.map((account) => (
+        <TouchableOpacity
+          key={account.id}
+          style={[
+            styles.bankAccountItem,
+            formData.bankAccount === account.id && styles.bankAccountSelected,
+          ]}
+          onPress={() => setFormData({ ...formData, bankAccount: account.id })}
+        >
+          <View style={styles.bankAccountInfo}>
+            <Ionicons name="business-outline" size={24} color="#1976d2" />
+            <View style={styles.bankAccountDetails}>
+              <Text style={styles.bankAccountName}>{account.bankName}</Text>
+              <Text style={styles.bankAccountNumber}>{account.accountNumber}</Text>
+            </View>
+          </View>
+          <View style={styles.bankAccountBadge}>
+            {account.isPrimary && (
+              <View style={styles.primaryBadge}>
+                <Text style={styles.primaryBadgeText}>Primary</Text>
+              </View>
+            )}
+            {formData.bankAccount === account.id && (
+              <Ionicons name="checkmark-circle" size={20} color="#4caf50" />
+            )}
+          </View>
+        </TouchableOpacity>
+      ))}
+
       <View style={styles.inputContainer}>
         <TextInput
           style={[styles.input, styles.textArea]}
-          placeholder="What's this for? (Optional)"
+          placeholder="What's this withdrawal for? (Optional)"
           value={formData.description}
           onChangeText={(value) => handleInputChange('description', value)}
           multiline
@@ -115,106 +140,102 @@ const SendMoneyScreen: React.FC = () => {
         />
       </View>
 
-      <Text style={styles.sectionTitle}>Recent Contacts</Text>
-      
-      {recentContacts.map((contact, index) => (
-        <TouchableOpacity
-          key={index}
-          style={styles.contactItem}
-          onPress={() => setFormData({ ...formData, recipient: contact.value })}
-        >
-          <View style={styles.contactAvatar}>
-            <Text style={styles.contactAvatarText}>{contact.avatar}</Text>
-          </View>
-          <View style={styles.contactInfo}>
-            <Text style={styles.contactName}>{contact.name}</Text>
-            <Text style={styles.contactValue}>{contact.value}</Text>
-          </View>
-          <View style={styles.contactType}>
-            <Text style={styles.contactTypeText}>{contact.type}</Text>
-          </View>
-        </TouchableOpacity>
-      ))}
+      <View style={styles.balanceInfo}>
+        <Text style={styles.balanceText}>Available balance: $32,149.00</Text>
+      </View>
     </View>
   );
 
   const renderStep2 = () => (
     <View style={styles.stepContainer}>
-      <Text style={styles.stepTitle}>Choose Payment Method</Text>
+      <Text style={styles.stepTitle}>Choose Withdrawal Method</Text>
       
-      <TouchableOpacity
-        style={[
-          styles.paymentMethod,
-          formData.paymentMethod === 'card' && styles.paymentMethodSelected,
-        ]}
-        onPress={() => setFormData({ ...formData, paymentMethod: 'card' })}
-      >
-        <Ionicons name="card-outline" size={24} color="#1976d2" />
-        <Text style={styles.paymentMethodText}>Credit/Debit Card</Text>
-        <Ionicons name="checkmark-circle" size={20} color="#4caf50" />
-      </TouchableOpacity>
+      {withdrawalMethods.map((method) => (
+        <TouchableOpacity
+          key={method.id}
+          style={[
+            styles.withdrawalMethod,
+            formData.withdrawalMethod === method.id && styles.withdrawalMethodSelected,
+          ]}
+          onPress={() => setFormData({ ...formData, withdrawalMethod: method.id })}
+        >
+          <View style={styles.withdrawalMethodInfo}>
+            <Ionicons name={method.icon as any} size={24} color="#1976d2" />
+            <View style={styles.withdrawalMethodDetails}>
+              <Text style={styles.withdrawalMethodName}>{method.name}</Text>
+              <Text style={styles.withdrawalMethodDetails}>
+                Fee: ${method.fee} • {method.time}
+              </Text>
+            </View>
+          </View>
+          {formData.withdrawalMethod === method.id && (
+            <Ionicons name="checkmark-circle" size={20} color="#4caf50" />
+          )}
+        </TouchableOpacity>
+      ))}
 
-      <TouchableOpacity
-        style={[
-          styles.paymentMethod,
-          formData.paymentMethod === 'bank' && styles.paymentMethodSelected,
-        ]}
-        onPress={() => setFormData({ ...formData, paymentMethod: 'bank' })}
-      >
-        <Ionicons name="business-outline" size={24} color="#1976d2" />
-        <Text style={styles.paymentMethodText}>Bank Account</Text>
-        <Ionicons name="checkmark-circle" size={20} color="#4caf50" />
-      </TouchableOpacity>
-
-      <View style={styles.feeInfo}>
-        <Text style={styles.feeText}>Transaction fee: $2.50</Text>
+      <View style={styles.limitInfo}>
+        <Text style={styles.limitText}>Withdrawal limits: $500 per day, $5,000 per month</Text>
       </View>
     </View>
   );
 
-  const renderStep3 = () => (
-    <View style={styles.stepContainer}>
-      <Text style={styles.stepTitle}>Review Transaction</Text>
-      
-      <View style={styles.reviewItem}>
-        <Text style={styles.reviewLabel}>Recipient</Text>
-        <Text style={styles.reviewValue}>{formData.recipient}</Text>
-      </View>
-
-      <View style={styles.reviewItem}>
-        <Text style={styles.reviewLabel}>Amount</Text>
-        <Text style={styles.reviewAmount}>${formData.amount}</Text>
-      </View>
-
-      <View style={styles.reviewItem}>
-        <Text style={styles.reviewLabel}>Payment Method</Text>
-        <Text style={styles.reviewValue}>
-          {formData.paymentMethod === 'card' ? 'Credit/Debit Card' : 'Bank Account'}
-        </Text>
-      </View>
-
-      {formData.description && (
+  const renderStep3 = () => {
+    const selectedAccount = bankAccounts.find(acc => acc.id === formData.bankAccount);
+    const selectedMethod = withdrawalMethods.find(m => m.id === formData.withdrawalMethod);
+    
+    return (
+      <View style={styles.stepContainer}>
+        <Text style={styles.stepTitle}>Review Withdrawal</Text>
+        
         <View style={styles.reviewItem}>
-          <Text style={styles.reviewLabel}>Description</Text>
-          <Text style={styles.reviewValue}>{formData.description}</Text>
+          <Text style={styles.reviewLabel}>Amount</Text>
+          <Text style={styles.reviewAmount}>${formData.amount}</Text>
         </View>
-      )}
 
-      <View style={styles.divider} />
+        <View style={styles.reviewItem}>
+          <Text style={styles.reviewLabel}>Bank Account</Text>
+          <View style={styles.reviewValueContainer}>
+            <Text style={styles.reviewValue}>{selectedAccount?.bankName}</Text>
+            <Text style={styles.reviewSubValue}>{selectedAccount?.accountNumber}</Text>
+          </View>
+        </View>
 
-      <View style={styles.reviewItem}>
-        <Text style={styles.reviewLabel}>Transaction Fee</Text>
-        <Text style={styles.reviewValue}>$2.50</Text>
+        <View style={styles.reviewItem}>
+          <Text style={styles.reviewLabel}>Withdrawal Method</Text>
+          <Text style={styles.reviewValue}>{selectedMethod?.name}</Text>
+        </View>
+
+        {formData.description && (
+          <View style={styles.reviewItem}>
+            <Text style={styles.reviewLabel}>Description</Text>
+            <Text style={styles.reviewValue}>{formData.description}</Text>
+          </View>
+        )}
+
+        <View style={styles.divider} />
+
+        <View style={styles.reviewItem}>
+          <Text style={styles.reviewLabel}>Withdrawal Fee</Text>
+          <Text style={styles.reviewValue}>${selectedMethod?.fee}</Text>
+        </View>
+
+        <View style={styles.reviewItem}>
+          <Text style={styles.reviewLabel}>Processing Time</Text>
+          <Text style={styles.reviewValue}>{selectedMethod?.time}</Text>
+        </View>
+
+        <View style={styles.divider} />
+
+        <View style={styles.reviewItem}>
+          <Text style={styles.totalLabel}>Total Amount</Text>
+          <Text style={styles.totalAmount}>
+            ${(parseFloat(formData.amount) + (selectedMethod?.fee || 0)).toFixed(2)}
+          </Text>
+        </View>
       </View>
-
-      <View style={styles.reviewItem}>
-        <Text style={styles.totalLabel}>Total</Text>
-        <Text style={styles.totalAmount}>
-          ${(parseFloat(formData.amount) + 2.50).toFixed(2)}
-        </Text>
-      </View>
-    </View>
-  );
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -225,7 +246,7 @@ const SendMoneyScreen: React.FC = () => {
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Send Money</Text>
+        <Text style={styles.headerTitle}>Withdraw Funds</Text>
         <TouchableOpacity style={styles.qrButton}>
           <Ionicons name="qr-code-outline" size={24} color="white" />
         </TouchableOpacity>
@@ -269,25 +290,25 @@ const SendMoneyScreen: React.FC = () => {
           <TouchableOpacity
             style={[
               styles.nextButton,
-              (!formData.recipient || !formData.amount) && styles.nextButtonDisabled,
+              (!formData.amount || !formData.bankAccount) && styles.nextButtonDisabled,
             ]}
             onPress={handleNext}
-            disabled={!formData.recipient || !formData.amount}
+            disabled={!formData.amount || !formData.bankAccount}
           >
             <Text style={styles.nextButtonText}>Next</Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
-            style={styles.sendButton}
-            onPress={handleSend}
+            style={styles.withdrawButton}
+            onPress={handleWithdraw}
             disabled={loading}
           >
             {loading ? (
               <ActivityIndicator color="white" />
             ) : (
               <>
-                <Ionicons name="send" size={20} color="white" style={styles.sendIcon} />
-                <Text style={styles.sendButtonText}>Send Money</Text>
+                <Ionicons name="business-outline" size={20} color="white" style={styles.withdrawIcon} />
+                <Text style={styles.withdrawButtonText}>Withdraw Funds</Text>
               </>
             )}
           </TouchableOpacity>
@@ -380,9 +401,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     backgroundColor: 'white',
   },
-  inputIcon: {
-    marginRight: 8,
-  },
   currencySymbol: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -410,54 +428,10 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     marginTop: 8,
   },
-  contactItem: {
+  bankAccountItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-  },
-  contactAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#1976d2',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  contactAvatarText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  contactInfo: {
-    flex: 1,
-  },
-  contactName: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#333',
-  },
-  contactValue: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 2,
-  },
-  contactType: {
-    backgroundColor: '#e3f2fd',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  contactTypeText: {
-    fontSize: 12,
-    color: '#1976d2',
-    fontWeight: '500',
-  },
-  paymentMethod: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    justifyContent: 'space-between',
     padding: 16,
     borderWidth: 1,
     borderColor: '#e0e0e0',
@@ -465,24 +439,91 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     backgroundColor: 'white',
   },
-  paymentMethodSelected: {
+  bankAccountSelected: {
     borderColor: '#1976d2',
     backgroundColor: '#f3f9ff',
   },
-  paymentMethodText: {
+  bankAccountInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
     flex: 1,
+  },
+  bankAccountDetails: {
+    marginLeft: 12,
+    flex: 1,
+  },
+  bankAccountName: {
     fontSize: 16,
     fontWeight: '500',
     color: '#333',
-    marginLeft: 12,
   },
-  feeInfo: {
+  bankAccountNumber: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 2,
+  },
+  bankAccountBadge: {
+    alignItems: 'flex-end',
+  },
+  primaryBadge: {
+    backgroundColor: '#e3f2fd',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginBottom: 4,
+  },
+  primaryBadgeText: {
+    fontSize: 12,
+    color: '#1976d2',
+    fontWeight: '500',
+  },
+  balanceInfo: {
+    backgroundColor: '#e8f5e9',
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 8,
+  },
+  balanceText: {
+    fontSize: 14,
+    color: '#2e7d32',
+    textAlign: 'center',
+  },
+  withdrawalMethod: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    borderRadius: 8,
+    marginBottom: 12,
+    backgroundColor: 'white',
+  },
+  withdrawalMethodSelected: {
+    borderColor: '#1976d2',
+    backgroundColor: '#f3f9ff',
+  },
+  withdrawalMethodInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  withdrawalMethodDetails: {
+    marginLeft: 12,
+    flex: 1,
+  },
+  withdrawalMethodName: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#333',
+  },
+  limitInfo: {
     backgroundColor: '#fff3e0',
     padding: 12,
     borderRadius: 8,
     marginTop: 8,
   },
-  feeText: {
+  limitText: {
     fontSize: 14,
     color: '#f57c00',
     textAlign: 'center',
@@ -497,10 +538,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
   },
+  reviewValueContainer: {
+    alignItems: 'flex-end',
+  },
   reviewValue: {
     fontSize: 14,
     color: '#333',
     fontWeight: '500',
+  },
+  reviewSubValue: {
+    fontSize: 12,
+    color: '#666',
+    marginTop: 2,
   },
   reviewAmount: {
     fontSize: 20,
@@ -557,7 +606,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: '500',
   },
-  sendButton: {
+  withdrawButton: {
     flex: 1,
     flexDirection: 'row',
     paddingVertical: 12,
@@ -566,14 +615,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#1976d2',
     borderRadius: 8,
   },
-  sendIcon: {
+  withdrawIcon: {
     marginRight: 8,
   },
-  sendButtonText: {
+  withdrawButtonText: {
     fontSize: 16,
     color: 'white',
     fontWeight: '500',
   },
 });
 
-export default SendMoneyScreen;
+export default WithdrawScreen;

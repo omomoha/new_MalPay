@@ -20,6 +20,10 @@ import {
 import { Add as AddIcon } from '@mui/icons-material';
 import BalancePage from './Balance/BalancePage';
 import TransactionDetailPage from './TransactionDetail/TransactionDetailPage';
+import SendMoneyPage from './SendMoney/SendMoneyPage';
+import WithdrawPage from './Withdraw/WithdrawPage';
+import QRCodePage from './QRCode/QRCodePage';
+import ProfileSetupPage from './ProfileSetup/ProfileSetupPage';
 
 const EmailVerificationPage: React.FC = () => {
   return (
@@ -809,5 +813,6 @@ export {
   QRCodePage,
   BalancePage,
   TransactionDetailPage,
+  ProfileSetupPage,
   NotFoundPage,
 };

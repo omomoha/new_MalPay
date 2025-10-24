@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Provider, useDispatch } from 'react-redux';
-import { store, AppDispatch } from './store';
+import { Provider, useDispatch, useSelector } from 'react-redux';
+import { store, AppDispatch, RootState } from './store';
 import { MalPayThemeProvider } from './theme/index';
 import { initializeAuth } from './store/slices/authSlice';
 
@@ -28,11 +28,13 @@ import {
   NotFoundPage,
   BalancePage,
   TransactionDetailPage,
+  ProfileSetupPage,
 } from './pages';
 import DashboardPage from './pages/Dashboard/DashboardPage';
 
 const AppContent: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const { theme } = useSelector((state: RootState) => state.ui);
 
   useEffect(() => {
     console.log('AppContent mounted, initializing auth...');
@@ -43,8 +45,9 @@ const AppContent: React.FC = () => {
 
   return (
     <Router>
-      <div className="App">
-        <Routes>
+      <MalPayThemeProvider darkMode={theme === 'dark'}>
+        <div className="App">
+          <Routes>
           {/* Public Routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
@@ -78,8 +81,17 @@ const AppContent: React.FC = () => {
             {/* Transaction Detail */}
             <Route path="transaction/:id" element={<TransactionDetailPage />} />
             
-            {/* Withdrawals */}
+            {/* Send Money */}
+            <Route path="send-money" element={<SendMoneyPage />} />
+            
+            {/* Withdraw */}
             <Route path="withdraw" element={<WithdrawPage />} />
+            
+            {/* QR Code */}
+            <Route path="qr-code" element={<QRCodePage />} />
+            
+            {/* Profile Setup */}
+            <Route path="profile-setup" element={<ProfileSetupPage />} />
             
             {/* Profile & Settings */}
             <Route path="profile" element={<ProfilePage />} />
@@ -92,7 +104,8 @@ const AppContent: React.FC = () => {
           {/* 404 */}
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
-      </div>
+        </div>
+      </MalPayThemeProvider>
     </Router>
   );
 };
@@ -102,9 +115,7 @@ function App() {
   
   return (
     <Provider store={store}>
-      <MalPayThemeProvider>
-        <AppContent />
-      </MalPayThemeProvider>
+      <AppContent />
     </Provider>
   );
 }
